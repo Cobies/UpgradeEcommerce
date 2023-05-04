@@ -1,0 +1,652 @@
+﻿@{
+    ViewData["Title"] = "Clientes";
+    ViewData["Scripts"] = "ClientesScript";
+}
+<div class="text-end me-0 mb-2">
+    <div class="container-fluid row ">
+        <div class="row">
+            <input class="form-control me-0 col-2" style="max-width: 25%;" name="txtbusqueda" id="txtbusqueda" type="text" value="" placeholder="Buscar">
+            
+
+            <button type="button" class="btn btn-primary ms-5 end-0 position-relative" style="max-width: 25%;" data-bs-toggle="modal" data-bs-target="#ClienteModal">
+                Agregar Cliente
+            </button>
+        </div>
+    </div>
+</div>
+<div class="table-responsive-sm">
+    <table class="table  table-sm table-hover ">
+        <caption class="end-0 mt-2 ">
+            Elementos:
+            <button onclick="movimientoanterior()" class="btn btn-outline-secondary btn-sm rounded-circle">
+                    <i class="bi bi-arrow-left"></i>
+                </button>
+             <span id="cantelemento" name="cantelemento">1 - 20</span>
+            <input type="hidden" name="numelement" id="numelement" value="0" />
+            <button onclick="movimientosiguiente()" class="btn btn-outline-secondary btn-sm rounded-circle">
+                    <i class="bi bi-arrow-right"></i>
+            </button><span name="carga" id="carga">
+            </span>
+        </caption>
+        <thead>
+            <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Tipo de Documento</th>
+                <th scope="col">Documento</th>
+                <th scope="col">Acciones</th>
+                
+            </tr>
+        </thead>
+        <tbody id="tabla">
+        </tbody>
+    </table>
+</div>
+
+
+<!--Modals    -->
+<!-- Button trigger modal -->
+<!-- Modal -->
+<div class="modal fade" id="ClienteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Nuevo Rol</h5>
+                <but    ton type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></but>
+            </div>
+            <div class="modal-body">
+                <form action="" method="post" id="ingresocliente" name="ingresocliente">
+                    <input type="hidden" id="_id" name="_id" value=""/>
+                    <div class="row">
+                        <div class="mb-3 col-6">
+                            <label for="tipoDocumento" class="form-label">Tipo de Documento</label>
+                            <div class="input-group mb-3 ">
+                                <a class="seleccionable form-select modselect" data-bs-toggle="dropdown" aria-expanded="false"><span id="texttipodocumento" name="texttipodocumento">Seleccione un tipo de documento</span></a>
+
+                                <ul class="dropdown-menu w-100">
+                                    <input class=" form-control" id="tipodocumentobusqueda" name="tipodocumentobusqueda" />
+                                    <span id="tipodocumentoselect" name="tipodocumentoselect">
+                                    </span>
+                                </ul>
+                            </div>
+                            <input type="hidden" name="tipodocumento" id="tipodocumento" />
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Documento</label>
+                            <div class="input-group mb-3 d-inline-flex">
+                                <input type="text" class="form-control cero modinput " id="documento" name="documento" aria-describedby="emailHelp" /><button type="button" onclick="busquedadocumento()" class="btn btn-primary  position-relative end-0" style="max-width: 25%;">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="mb-3 col-12">
+                            <label for="descripcionRol" class="form-label">Nombre</label>
+                            <input type="text" class="form-control cero modinput" id="nombre" name="nombre" aria-describedby="emailHelp" />
+                        </div>
+
+                    </div>
+                    
+                    <div class="row">
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Telefono</label>
+                            <input type="text" class="form-control cero modinput" id="telefono" name="telefono" aria-describedby="emailHelp" />
+                        </div>
+
+                        <div class="mb-3 col-6">
+                            <label for="tipoDocumento" class="form-label">Departamento</label>
+                            <div class="input-group mb-3 ">
+                                <a class="seleccionable form-select w-100" data-bs-toggle="dropdown" aria-expanded="false"><span id="textdepartamento" name="textdepartamento">Seleccione un departamento</span></a>
+                                <button type="button" class="btn btn-primary ms-5 position-absolute end-0" style="max-width: 25%;" data-bs-toggle="modal" data-bs-target="#DepartamentoModal">
+                                    <i class="bi bi-plus-circle"></i>
+                                </button>
+                                <ul class="dropdown-menu w-100">
+                                    <input class=" form-control" id="departamentobusqueda" name="departamentobusqueda" />
+                                    <span id="departamentoselect" name="departamentoselect">
+                                    </span>
+                                </ul>
+                            </div>
+                            <input type="hidden" name="departamento" id="departamento" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="mb-3 col-6">
+                            <label for="tipoDocumento" class="form-label">Provincia</label>
+                            <div class="input-group mb-3 ">
+                                <a class="seleccionable form-select w-100" data-bs-toggle="dropdown" aria-expanded="false"><span id="textprovincia" name="textprovincia">Seleccione una provincia</span></a>
+                                <button type="button" class="btn btn-primary ms-5 position-absolute end-0" style="max-width: 25%;" data-bs-toggle="modal" data-bs-target="#ProvinciaModal">
+                                    <i class="bi bi-plus-circle"></i>
+                                </button>
+                                <ul class="dropdown-menu w-100">
+                                    <input class=" form-control" id="provinciabusqueda" name="provinciabusqueda" />
+                                    <span id="provinciaselect" name="provinciaselect">
+                                    </span>
+                                </ul>
+                            </div>
+                            <input type="hidden" name="provincia" id="provincia" />
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label for="tipoDocumento" class="form-label">Distrito</label>
+                            <div class="input-group mb-3 ">
+                                <a class="seleccionable form-select w-100" data-bs-toggle="dropdown" aria-expanded="false"><span id="textdistrito" name="textdistrito">Seleccione un distrito</span></a>
+                                <button type="button" class="btn btn-primary ms-5 position-absolute end-0" style="max-width: 25%;" data-bs-toggle="modal" data-bs-target="#DistritoModal">
+                                    <i class="bi bi-plus-circle"></i>
+                                </button>
+                                <ul class="dropdown-menu w-100">
+                                    <input class=" form-control" id="distritobusqueda" name="distritobusqueda" />
+                                    <span id="distritoselect" name="distritoselect">
+                                    </span>
+                                </ul>
+                            </div>
+                            <input type="hidden" name="distrito" id="distrito" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="mb-3 col-12">
+                            <label for="descripcionRol" class="form-label">Direccion</label>
+                            <input type="text" class="form-control cero modinput" id="direccion" name="direccion" aria-describedby="emailHelp" />
+                        </div>
+                        <div class="mb-3 col-12">
+                            <label for="descripcionRol" class="form-label">Correo electronico</label>
+                            <input type="text" class="form-control cero modinput" id="email" name="email" aria-describedby="emailHelp" />
+                        </div>
+                    </div>
+                    <div class="modal-footer mt-4">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Enviar</button>
+                    </div>
+                </form>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+@section ClientesScript{
+    <script>
+        $(document).ready(function(){
+            rellenartabla();
+            rellenarSelectTipoDocumentos();
+            rellenarSelectDepartamento();
+        });
+    </script>
+
+    <script>
+        $("form[name=ingresocliente]").on('submit', function (e) {
+            e.preventDefault();
+            var datos = new FormData(this);
+            $.ajax({
+                type:"POST",
+                url: "/Clientes/IngresoCliente",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg){
+                    if(msg == "404"){
+                        alert("fracaso");
+                    }else{
+                        window.location.reload();
+                    }
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $("input[name='txtbusqueda']").on('keyup', function(){
+            rellenartabla();
+
+        });
+    </script>
+
+
+
+    <script>
+        function rellenartabla(){
+            var numelement = document.getElementById("numelement").value;
+            var busq = document.getElementById("txtbusqueda").value;
+            var datos = new FormData();
+            datos.append("numelement", numelement);
+            datos.append("busqueda", busq);
+            $.get({
+            type: "post",
+            url: "/Clientes/BusquedaClienteLimite",
+            data: datos,
+            contentType: false,
+            cache: false,
+            processData: false,
+                beforeSend: function () {
+                    $("#carga").append(`<div class="d-flex align-items-center">
+                                        <strong>Loading...</strong>
+                                        <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div>
+                                        </div>`
+                    );
+                },
+                success: function (msg) {
+                    $("#carga").html("");
+                var dato = jQuery.parseJSON(msg);
+                $("#tabla").html("");
+                for (var i = 0; i < dato.length; i++) {
+
+                        $("#tabla").append(
+                            "<tr id='r'>" +
+                            "<td id='r' scope='col'>" + dato[i].Persona.Nombre + "</td>" +
+                            "<td id='r' scope='col'>" + dato[i].Persona.TipoDocumentoIdentidad.Abreviatura + "</td>" +
+                            "<td id='r' scope='col'>" + dato[i].Persona.DocumentoIdentidad + "</td>" +
+                            `<td class='d-inline-flex'> <button type='button' class='btn btn-primary btn-sm ' onclick="BusquedaCliente('${dato[i]._id}')" data-bs-toggle='modal' data-bs-target='#ClienteModal'><i class='bi bi-search'></i> </button>` +
+                            `<button type='button' class='btn btn-primary btn-sm ms-2' data-bs-toggle='modal' onclick="EditCliente('${dato[i]._id}')" data-bs-target='#ClienteModal'> <i class='bi bi-pencil-square'></i></button>` +
+
+                            "</tr>"
+                        );
+                }
+
+            }
+            });
+        }
+    </script>
+
+    <script>
+        $("input[name='tipodocumentobusqueda']").on('keyup', function () {
+            var busq = $(this).val();
+            if (busq.length > 0) {
+                $("#tipodocumentoselect").html(" ");
+                var datos = new FormData();
+                datos.append("busqueda", busq);
+                $.ajax({
+                    type: "post",
+                    url: "/Clientes/BusquedaTipoDocumento",
+                    data: datos,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function (msg) {
+                        var dato = jQuery.parseJSON(msg);
+
+                        $("#tipodocumentoselect").html("");
+                        for (var i = 0; i < dato.length; i++) {
+                            $("#tipodocumentoselect").append(
+                                `<li><a class="dropdown-item seleccionable" onclick="seleccionabletipodocumentoidentidad('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre}</a></li>`);
+                        }
+
+                    }
+                });
+            } else {
+                rellenarSelectTipoDocumentos();
+            }
+        });
+    </script>
+
+    <script>
+        function rellenarSelectTipoDocumentos() {
+            $.get({
+                type: "post",
+                url: "/Clientes/TablaTipoDocumentos",
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    var dato = jQuery.parseJSON(msg);
+
+                    $("#tipodocumentoselect").html("");
+                    for (var i = 0; i < dato.length; i++) {
+                        $("#tipodocumentoselect").append(
+                            `<li><a class="dropdown-item seleccionable" onclick="seleccionabletipodocumentoidentidad('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre}</a></li>`);
+                    }
+
+                }
+            });
+        }
+    </script>
+    <script>
+        function seleccionabletipodocumentoidentidad(id, nombre) {
+            $("#texttipodocumento").html("");
+
+            $("#texttipodocumento").append(nombre);
+            $("input[name='tipodocumento']").val(id);
+        }
+    </script>
+
+    <script>
+        $("input[name='departamentobusqueda']").on('keyup', function () {
+            var busq = $(this).val();
+            if (busq.length > 0) {
+                $("#departamentoselect").html(" ");
+                var datos = new FormData();
+                datos.append("busqueda", busq);
+                $.ajax({
+                    type: "post",
+                    url: "/Clientes/BusquedaDepartamento",
+                    data: datos,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function (msg) {
+                        var dato = jQuery.parseJSON(msg);
+
+                        $("#departamentoselect").html("");
+                        for (var i = 0; i < dato.length; i++) {
+                            $("#departamentoselect").append(
+                                `<li><a class="dropdown-item seleccionable" onclick="seleccionabledepartamento('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre}</a></li>`);
+                        }
+
+                    }
+                });
+            } else {
+                rellenarSelectDepartamento();
+            }
+        });
+    </script>
+
+    <script>
+        function rellenarSelectDepartamento() {
+            $.get({
+                type: "post",
+                url: "/Clientes/TablaDepartamento",
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    var dato = jQuery.parseJSON(msg);
+
+                    $("#departamentoselect").html("");
+                    for (var i = 0; i < dato.length; i++) {
+                        $("#departamentoselect").append(
+                            `<li><a class="dropdown-item seleccionable" onclick="seleccionabledepartamento('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre}</a></li>`);
+                    }
+
+                }
+            });
+        }
+    </script>
+    <script>
+        function seleccionabledepartamento(id, nombre) {
+            $("#textdepartamento").html("");
+
+            $("#textdepartamento").append(nombre);
+            $("input[name='departamento']").val(id);
+            rellenarSelectProvincia();
+        }
+    </script>
+
+    <script>
+        $("input[name='provinciabusqueda']").on('keyup', function () {
+            var busq = $(this).val();
+            var departamento = $('#departamento').val();
+            if (busq.length > 0) {
+                $("#provinciaselect").html(" ");
+                var datos = new FormData();
+                datos.append("busqueda", busq);
+                datos.append("departamento", departamento);
+                $.ajax({
+                    type: "post",
+                    url: "/Clientes/BusquedaProvincia",
+                    data: datos,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function (msg) {
+                        var dato = jQuery.parseJSON(msg);
+
+                        $("#provinciaselect").html("");
+                        for (var i = 0; i < dato.length; i++) {
+                            $("#provinciaselect").append(
+                                `<li><a class="dropdown-item seleccionable" onclick="seleccionableprovincia('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre}</a></li>`);
+                        }
+
+                    }
+                });
+            } else {
+                rellenarSelectUnidad();
+            }
+        });
+    </script>
+
+
+    <script>
+        function rellenarSelectProvincia() {
+            var datos = new FormData();
+            var departamento = $('#departamento').val();
+            datos.append("departamento", departamento);
+            $.get({
+                type: "post",
+                url: "/Clientes/TablaProvinciaForDepartamento",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    var dato = jQuery.parseJSON(msg);
+
+                    $("#provinciaselect").html("");
+                    for (var i = 0; i < dato.length; i++) {
+                        $("#provinciaselect").append(
+                            `<li><a class="dropdown-item seleccionable" onclick="seleccionableprovincia('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre}</a></li>`);
+                    }
+
+                }
+            });
+        }
+    </script>
+
+    <script>
+        function seleccionableprovincia(id, nombre) {
+            $("#textprovincia").html("");
+
+            $("#textprovincia").append(nombre);
+            $("input[name='provincia']").val(id);
+            rellenarSelectDistrito();
+        }
+    </script>
+
+    <script>
+        $("input[name='distritobusqueda']").on('keyup', function () {
+            var busq = $(this).val();
+            var provincia = $("input[name='provincia']").val();
+            if (busq.length > 0) {
+                $("#distritoselect").html(" ");
+                var datos = new FormData();
+                datos.append("busqueda", busq);
+                datos.append("provincia", provincia);
+                $.ajax({
+                    type: "post",
+                    url: "/Clientes/BusquedaDistrito",
+                    data: datos,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function (msg) {
+                        var dato = jQuery.parseJSON(msg);
+
+                        $("#distritoselect").html("");
+                        for (var i = 0; i < dato.length; i++) {
+                            $("#distritoselect").append(
+                                `<li><a class="dropdown-item seleccionable" onclick="seleccionabledistrito('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre}</a></li>`);
+                        }
+
+                    }
+                });
+            } else {
+                rellenarSelectMoneda();
+            }
+        });
+    </script>
+
+
+    <script>
+        function rellenarSelectDistrito() {
+            var provincia = $("input[name='provincia']").val();
+            var datos = new FormData();
+            datos.append("provincia", provincia);
+            $.get({
+                type: "post",
+                url: "/Clientes/TablaDistritoForProvincia",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    var dato = jQuery.parseJSON(msg);
+
+                    $("#distritoselect").html("");
+                    for (var i = 0; i < dato.length; i++) {
+                        $("#distritoselect").append(
+                            `<li><a class="dropdown-item seleccionable" onclick="seleccionabledistrito('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre}</a></li>`);
+                    }
+
+                }
+            });
+        }
+    </script>
+
+    <script>
+        function seleccionabledistrito(id, nombre) {
+            $("#textdistrito").html("");
+
+            $("#textdistrito").append(nombre);
+            $("input[name='distrito']").val(id);
+        }
+    </script>
+
+    <script>
+        function movimientosiguiente() {
+
+            var numelement = document.getElementById("numelement").value;
+            var num = parseInt(numelement);
+
+            num += 20;
+            var numinicial = num + 1;
+            var numfinal = num + 20;
+
+            $("#cantelemento").html(" ");
+            $("#cantelemento").append(numinicial + " - " + numfinal);
+            $("input[name='numelement']").val(num);
+            rellenartabla();
+        }
+
+
+        function movimientoanterior() {
+
+            var numelement = document.getElementById("numelement").value;
+            var num = parseInt(numelement);
+
+            if (num != 0) {
+                num -= 20;
+                var numinicial = num + 1;
+                var numfinal = num + 20;
+
+                $("#cantelemento").html(" ");
+                $("#cantelemento").append(numinicial + " - " + numfinal);
+                $("input[name='numelement']").val(num);
+                rellenartabla();
+
+            }
+        }
+
+    </script>
+
+    <script>
+        function busquedadocumento(){
+            var tipodocumento = document.getElementById("tipodocumento").value;
+            var documento = document.getElementById("documento").value;
+            var datos = new FormData();
+            datos.append("tipodocumento", tipodocumento);
+            datos.append("documento", documento);
+            $.get({
+                type: "post",
+                url: "/Usuarios/IdentificarDocumento",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    if(msg == "400"){
+                        alert("Debe elegir un documento y colocar el numero para realizar la busqueda");
+                    }else{
+                    var dato = jQuery.parseJSON(msg);
+                        $("input[name='direccion']").val(dato.direccion);
+                        $("input[name='nombre']").val(dato.nombre);
+
+                    }
+                }
+            });
+        }
+    </script>
+
+    <script>
+        function BusquedaCliente(id) {
+            var datos = new FormData();
+            datos.append("id", id);
+            $.ajax({
+                type: "POST",
+                url: "/Clientes/BuscarClienteId",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+
+
+                    var dato = jQuery.parseJSON(msg);
+                
+                    $("#nombre").val(dato.Persona.Nombre);
+                    $("#documento").val(dato.Persona.DocumentoIdentidad);
+                    $("#telefono").val(dato.Persona.Telefono);
+                    $("#direccion").val(dato.Persona.Direccion);
+                    $("#email").val(dato.Persona.Email);
+                    seleccionabletipodocumentoidentidad(dato.Persona.TipoDocumentoIdentidad._id, dato.Persona.TipoDocumentoIdentidad.Nombre);
+
+                    seleccionabledistrito(dato.Persona.Distrito._id, dato.Persona.Distrito.Nombre);
+                    VisualizarModal();
+                }
+            });
+        }
+    </script>
+    <script>
+        function EditCliente(id) {
+            var datos = new FormData();
+            datos.append("id", id);
+            $.ajax({
+                type: "POST",
+                url: "/Clientes/BuscarClienteId",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+
+
+                    var dato = jQuery.parseJSON(msg);
+
+                    $("#nombre").val(dato.Persona.Nombre);
+                    $("#documento").val(dato.Persona.DocumentoIdentidad);
+                    $("#telefono").val(dato.Persona.Telefono);
+                    $("#direccion").val(dato.Persona.Direccion);
+                    $("#email").val(dato.Persona.Email);
+                    seleccionabletipodocumentoidentidad(dato.Persona.TipoDocumentoIdentidad._id, dato.Persona.TipoDocumentoIdentidad.Nombre);
+                    seleccionabledepartamento(dato.Persona.Distrito.Provincia.Departamento._id, dato.Persona.Distrito.Provincia.Departamento.Nombre)
+                    seleccionabledistrito(dato.Persona.Distrito._id, dato.Persona.Distrito.Nombre);
+                    seleccionableprovincia(dato.Persona.Distrito.Provincia._id,dato.Persona.Distrito.Provincia.Nombre)
+                    EditarModal();
+
+                }
+            });
+        }
+    </script>
+
+
+    <script src="~/js/ingresovisualizareditar.js"></script>
+}
+
+
+

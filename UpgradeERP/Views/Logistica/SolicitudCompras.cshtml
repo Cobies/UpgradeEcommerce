@@ -1,0 +1,377 @@
+﻿@{
+    ViewData["Title"] = "Solicitud de Compras";
+    ViewData["Scripts"] = "SolicitudComprasScript";
+}
+
+<div class="text-end me-0 mb-2">
+    <div class="container-fluid row ">
+        <div class="row">
+            <input class="form-control me-0 col-2" style="max-width: 25%;" name="txtbusqueda" id="txtbusqueda" type="text" value="" placeholder="Buscar">
+
+
+            <button type="button" class="btn btn-primary ms-5 end-0 position-relative" style="max-width: 25%;" data-bs-toggle="modal" data-bs-target="#SolicitudDeCompraModal">
+                Agregar Solicitud
+            </button>
+        </div>
+    </div>
+</div>
+<div class="table-responsive-sm">
+
+    <table class="table  table-sm table-hover ">
+        <caption class="end-0 mt-2 ">
+            Elementos:
+            <button onclick="movimientoanterior()" class="btn btn-outline-secondary btn-sm rounded-circle">
+                <i class="bi bi-arrow-left"></i>
+            </button>
+            <span id="cantelemento" name="cantelemento">1 - 20</span>
+            <input type="hidden" name="numelement" id="numelement" value="0" />
+            <button onclick="movimientosiguiente()" class="btn btn-outline-secondary btn-sm rounded-circle">
+                <i class="bi bi-arrow-right"></i>
+            </button><span name="carga" id="carga">
+            </span>
+        </caption>
+        <thead>
+            <tr>
+                <th scope="col">Activo</ths>
+                <th scope="col">Almacen</th>
+                <th scope="col">Fecha de Solicitud</th>
+                <th scope="col">Codigo</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Cantidad</th>
+                <th scope="col">Empleado</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="tabla">
+        </tbody>
+    </table>
+</div>
+
+
+<!--Modals    -->
+<!-- Button trigger modal -->
+<!-- Modal -->
+<div class="modal fade" id="SolicitudDeCompraModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Nueva Solicitud Compra</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="post" id="ingresosolicitudcompra" name="ingresosolicitudcompra">
+                    <input type="hidden" id="_id" name="_id" value="" />
+                    <div class="row">
+                        <div class="mb-3 col-6">
+                            <label for="tipoDocumento" class="form-label">Producto</label>
+                            <div class="input-group mb-3 ">
+                                <a class="seleccionable form-select" data-bs-toggle="dropdown" aria-expanded="false"><span id="textproducto" name="textproducto">Seleccione un producto</span></a>
+                                <ul class="dropdown-menu w-100">
+                                    <input class=" form-control" id="productobusqueda" name="productobusqueda" />
+                                    <span id="productoselect" name="productoselect">
+                                    </span>
+                                </ul>
+                            </div>
+                            <input type="hidden" name="producto" id="producto" />
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Numero de Orden de Venta</label>
+                            <input type="text" class="form-control cero" id="numeroordenventa" name="numeroordenventa" aria-describedby="emailHelp" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Cantidad</label>
+                            <input type="text" class="form-control cero" id="cantidad" name="cantidad" aria-describedby="emailHelp" />
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label for="tipoDocumento" class="form-label">Almacen</label>
+                            <div class="input-group mb-3 ">
+                                <a class="seleccionable form-select" data-bs-toggle="dropdown" aria-expanded="false"><span id="textalmacen" name="textalmacen">Seleccione un almacen</span></a>
+                                <ul class="dropdown-menu w-100">
+                                    <input class=" form-control" id="almacenbusqueda" name="almacenbusqueda" />
+                                    <span id="almacenselect" name="almacenselect">
+                                    </span>
+                                </ul>
+                            </div>
+                            <input type="hidden" name="almacen" id="almacen" />
+                        </div>
+
+                    </div>
+                    <div class="modal-footer mt-4">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Enviar</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+                            
+
+
+@section SolicitudComprasScript{
+    <script>
+        $(document).ready(function(){
+            rellenartabla();
+            rellenarSelectProducto();
+            rellenarSelectAlmacen();
+        });
+    </script>
+
+
+    <script>
+        $("form[name=ingresosolicitudcompra]").on('submit', function (e) {
+            e.preventDefault();
+            var datos = new FormData(this);
+            $.ajax({
+                type:"POST",
+                url: "/Logistica/IngresoSolicitudCompra",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg){
+                    if(msg == "404"){
+                        alert("fracaso");
+                    }else{
+                        window.location.reload();
+                    }
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $("input[name='txtbusqueda']").on('keyup', function(){
+            rellenartabla();
+        });
+    </script>
+
+
+
+    <script>
+        function rellenartabla(){
+            var numelement = document.getElementById("numelement").value;
+            var busq = document.getElementById("txtbusqueda").value;
+            var datos = new FormData();
+            datos.append("numelement", numelement);
+            datos.append("busqueda", busq);
+        $.get({
+            type: "post",
+                url: "/Logistica/BusquedaSolicitudCompraLimite",
+                data: datos,
+            contentType: false,
+            cache: false,
+            processData: false,
+                beforeSend: function () {
+                    $("#carga").append(
+                        `<div class="d-flex align-items-center">
+                                        <strong>Loading...</strong>
+                                        <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div>
+                                        </div>`
+                    );
+                },
+                success: function (msg) {
+                    $("#carga").html("");
+                var dato = jQuery.parseJSON(msg);
+                $("#tabla").html("");
+                for (var i = 0; i < dato.length; i++) {
+                    var estado = "";
+                        if (dato[i].Estado == true){
+                            estado = "SI";
+                        }else{
+                            estado = "NO";
+                        }
+
+                        $("#tabla").append(
+                            "<tr id='r'>" +
+                            "<td id='r' scope='col'>" + estado + "</td>" +
+                            "<td id='r' scope='col'>" + dato[i].Almacen.Abreviatura + "</td>" +
+                            "<td id='r' scope='col'>" + dato[i].Fecha + "</td>" +
+                            "<td id='r' scope='col'>" + dato[i].Producto.Codigo + "</td>" +
+                            "<td id='r' scope='col'>" + dato[i].Producto.Nombre + "</td>" +
+                            "<td id='r' scope='col'>" + dato[i].Cantidad + "</td>" +
+                            "<td id='r' scope='col'>" + dato[i].Empleado.Persona.Nombre + "</td>" +
+                            `<td class='d-inline-flex'> <button type='button' class='btn btn-primary btn-sm ' data-bs-toggle='modal' data-bs-target='#SolicitudDeCompraModal' onclick="ProductoId('${dato[i]._id}')"><i class='bi bi-search'></i> </button>` +
+                            
+                                "</tr>"
+                        );
+                }
+
+            }
+        });
+        }
+    </script>
+
+    <script>
+        $("input[name='almacenbusqueda']").on('keyup', function () {
+            var busq = $(this).val();
+            if (busq.length > 0) {
+                $("#almacenselect").html(" ");
+                var datos = new FormData();
+                datos.append("busqueda", busq);
+                $.ajax({
+                    type: "post",
+                    url: "/Almacen/BusquedaAlmacen",
+                    data: datos,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function (msg) {
+                        var dato = jQuery.parseJSON(msg);
+
+                        $("#almacenselect").html("");
+                        for (var i = 0; i < dato.length; i++) {
+                            $("#almacenselect").append(
+                                `<li><a class="dropdown-item seleccionable" onclick="seleccionablealmacen('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre}</a></li>`);
+                        }
+
+                    }
+                });
+            } else {
+                rellenarSelectAlmacen();
+            }
+        });
+    </script>
+
+
+    <script>
+        function rellenarSelectAlmacen() {
+            $.get({
+                type: "post",
+                url: "/Almacen/TablaAlmacen",
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    var dato = jQuery.parseJSON(msg);
+
+                    $("#almacenselect").html("");
+                    for (var i = 0; i < dato.length; i++) {
+                        $("#almacenselect").append(
+                            `<li><a class="dropdown-item seleccionable" onclick="seleccionablealmacen('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre}</a></li>`);
+                    }
+
+                }
+            });
+        }
+    </script>
+
+    <script>
+        function seleccionablealmacen(id, nombre) {
+            $("#textalmacen").html("");
+
+            $("#textalmacen").append(nombre);
+            $("input[name='almacen']").val(id);
+        }
+    </script>
+
+
+
+    <script>
+        $("input[name='productobusqueda']").on('keyup', function () {
+            var busq = $(this).val();
+            if (busq.length > 0) {
+                $("#productoselect").html(" ");
+                var datos = new FormData();
+                datos.append("busqueda", busq);
+                $.ajax({
+                    type: "post",
+                    url: "/Almacen/BusquedaProducto",
+                    data: datos,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function (msg) {
+                        var dato = jQuery.parseJSON(msg);
+
+                        $("#productoselect").html("");
+                        for (var i = 0; i < dato.length; i++) {
+                            $("#productoselect").append(
+                                `<li><a class="dropdown-item seleccionable" onclick="seleccionableproducto('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre}</a></li>`);
+                        }
+
+                    }
+                });
+            } else {
+                rellenarSelectProducto();
+            }
+        });
+    </script>
+
+
+    <script>
+        function rellenarSelectProducto() {
+            $.get({
+                type: "post",
+                url: "/Almacen/TablaProductos",
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    var dato = jQuery.parseJSON(msg);
+
+                    $("#productoselect").html("");
+                    for (var i = 0; i < dato.length; i++) {
+                        $("#productoselect").append(
+                            `<li><a class="dropdown-item seleccionable" onclick="seleccionableproducto('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre}</a></li>`);
+                    }
+
+                }
+            });
+        }
+    </script>
+
+    <script>
+        function seleccionableproducto(id, nombre) {
+            $("#textproducto").html("");
+
+            $("#textproducto").append(nombre);
+            $("input[name='producto']").val(id);
+        }
+    </script>
+
+
+
+    <script>
+        function movimientosiguiente() {
+
+            var numelement = document.getElementById("numelement").value;
+            var num = parseInt(numelement);
+
+            num += 20;
+            var numinicial = num + 1;
+            var numfinal = num + 20;
+
+            $("#cantelemento").html(" ");
+            $("#cantelemento").append(numinicial + " - " + numfinal);
+            $("input[name='numelement']").val(num);
+            rellenartabla();
+        }
+
+
+        function movimientoanterior() {
+
+            var numelement = document.getElementById("numelement").value;
+            var num = parseInt(numelement);
+
+            if (num != 0) {
+                num -= 20;
+                var numinicial = num + 1;
+                var numfinal = num + 20;
+
+                $("#cantelemento").html(" ");
+                $("#cantelemento").append(numinicial + " - " + numfinal);
+                $("input[name='numelement']").val(num);
+                rellenartabla();
+
+            }
+        }
+
+    </script>
+
+
+}

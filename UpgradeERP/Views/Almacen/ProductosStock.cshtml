@@ -1,0 +1,208 @@
+﻿@{
+    ViewData["Title"] = "Stock de Productos";
+    ViewData["Scripts"] = "StockProductosScript";
+}
+<div class="text-end me-0 mb-2">
+    <div class="container-fluid row ">
+        <div class="row">
+            <input class="form-control me-0 col-2" style="max-width: 25%;" name="txtbusqueda" id="txtbusqueda" type="text" value="" placeholder="Buscar">
+
+        </div>
+    </div>
+</div>
+<div class="table-responsive-sm">
+    <table class="table  table-sm table-hover ">
+        <caption class="end-0 mt-2 ">
+            Elementos:
+            <button onclick="movimientoanterior()" class="btn btn-outline-secondary btn-sm rounded-circle">
+                    <i class="bi bi-arrow-left"></i>
+                </button>
+             <span id="cantelemento" name="cantelemento">1 - 20</span>
+            <input type="hidden" name="numelement" id="numelement" value="0" />
+            <button onclick="movimientosiguiente()" class="btn btn-outline-secondary btn-sm rounded-circle">
+                    <i class="bi bi-arrow-right"></i>
+            </button>       <span name="carga" id="carga">
+            </span>
+        </caption>
+        <thead>
+            <tr>
+                <th scope="col">Codigo</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Marca</th>
+                <th scope="col">Stock</th>
+                <th scope="col">Precio Unitario</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="tabla">
+
+        </tbody>
+    </table>
+</div>
+
+
+<!--Modals    -->
+<!-- Button trigger modal -->
+<!-- Modal -->
+<div class="modal fade" id="ProductoModalStock" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Stock de producto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="post" id="ingresoproducto" name="ingresoproducto">
+                    <input type="hidden" id="_id" name="_id" value="" />
+                    <div class="row">
+                        
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Almacen</label>
+                            <input type="text" class="form-control cero modinput" id="almacen" name="almacen" aria-describedby="emailHelp" />
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Serie</label>
+                            <input type="text" class="form-control cero modinput" id="serie" name="serie" aria-describedby="emailHelp" />
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer mt-4">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary inhabilitarbtn" id="btnEnviar" data-bs-dismiss="modal">Enviar</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+@section StockProductosScript{
+    <script>
+        $(document).ready(function () {
+            rellenartabla();
+
+        });
+    </script>
+
+
+
+    <script>
+        $("input[name='txtbusqueda']").on('keyup', function () {
+            rellenartabla()
+        });
+    </script>
+
+
+
+    <script>
+        function rellenartabla() {
+            var numelement = document.getElementById("numelement").value;
+            var busq = document.getElementById("txtbusqueda").value;
+            var datos = new FormData();
+            datos.append("numelement", numelement);
+            datos.append("busqueda", busq);
+            $.get({
+                type: "post",
+                url: "/Almacen/BusquedaProductoStock",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false,
+                beforeSend: function(){
+                    $("#carga").append(`<div class="d-flex align-items-center">
+                        <strong>Loading...</strong>
+                        <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div>
+                        </div>`
+                    );
+                },
+                success: function (msg) {
+                    $("#carga").html("");
+                    var dato = jQuery.parseJSON(msg);
+                    $("#tabla").html("");
+                    for (var i = 0; i < dato.length; i++) {
+                        var precio = parseFloat(dato[i].Producto.Precio).toFixed(2);
+
+                        $("#tabla").append(
+                            "<tr id='r'>" +
+                                "<td id='r' scope='col'>" + dato[i].Producto.Codigo + "</td>" +
+                                "<td id='r' scope='col'>" + dato[i].Producto.Nombre + "</td>" +
+                                "<td id='r' scope='col'>" + dato[i].Producto.Marca.Nombre + "</td>" +
+                                "<td id='r' scope='col'>" + dato[i].Cantidad + "</td>" +
+                                "<td id='r' scope='col'>" + dato[i].Producto.Precio + "</td>" +
+                            `<td class='d-inline-flex'> <button type='button' class='btn btn-primary btn-sm ' data-bs-toggle='modal' onclick="BuscarProId('${dato[i]._id}')" data-bs-target='#ProductoModalStock'><i class='bi bi-search'></i> </button>` +
+                            
+                            "</tr>"
+                        );
+                    }
+                    
+                }
+            });
+        }
+    </script>
+
+    <script>
+        function movimientosiguiente() {
+
+            var numelement = document.getElementById("numelement").value;
+            var num = parseInt(numelement);
+
+            num += 20;
+            var numinicial = num + 1;
+            var numfinal = num + 20;
+
+            $("#cantelemento").html(" ");
+            $("#cantelemento").append(numinicial + " - " + numfinal);
+            $("input[name='numelement']").val(num);
+            rellenartabla();
+        }
+
+        function movimientoanterior() {
+
+            var numelement = document.getElementById("numelement").value;
+            var num = parseInt(numelement);
+
+            if (num != 0) {
+                num -= 20;
+                var numinicial = num + 1;
+                var numfinal = num + 20;
+
+                $("#cantelemento").html(" ");
+                $("#cantelemento").append(numinicial + " - " + numfinal);
+                $("input[name='numelement']").val(num);
+                rellenartabla();
+
+            }
+        }
+
+    </script>
+    <script>
+        function BuscarProId(id){
+            var datos = new FormData();
+            datos.append("id", id);
+            $.ajax({
+                type: "POST",
+                url: "/Almacen/BuscarProductoId",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+
+
+                    var dato = jQuery.parseJSON(msg);
+                    
+                   
+                    $("#almacen").val(dato.Almacen.Nombre);
+                    $("#serie").val(dato.Serie);
+                    $("#stock").val(dato.Cantidad);
+                    VisualizarModal();
+                }
+            });
+        }
+    </script>
+    
+    <script src="~/js/ingresovisualizareditar.js"></script>
+}

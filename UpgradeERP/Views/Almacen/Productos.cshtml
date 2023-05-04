@@ -1,0 +1,1078 @@
+﻿@{
+    ViewData["Title"] = "Productos";
+    ViewData["Scripts"] = "ProductosScript";
+}
+
+<div class="text-end me-0 mb-2">
+    <div class="container-fluid row ">
+        <div class="row">
+            <input class="form-control me-0 col-2" style="max-width: 25%;" name="txtbusqueda" id="txtbusqueda" type="text" value="" placeholder="Buscar">
+
+
+            <button type="button" class="btn btn-primary ms-5 end-0 position-relative" style="max-width: 25%;" data-bs-toggle="modal" data-bs-target="#ProductoModal">
+                Agregar Producto
+            </button>
+        </div>
+    </div>
+</div>
+<div class="table-responsive-sm">
+
+    <table class="table  table-sm table-hover ">
+        <caption class="end-0 mt-2 ">
+            Elementos:
+            <button onclick="movimientoanterior()" class="btn btn-outline-secondary btn-sm rounded-circle">
+                <i class="bi bi-arrow-left"></i>
+            </button>
+            <span id="cantelemento" name="cantelemento">1 - 20</span>
+            <input type="hidden" name="numelement" id="numelement" value="0" />
+            <button onclick="movimientosiguiente()" class="btn btn-outline-secondary btn-sm rounded-circle">
+                <i class="bi bi-arrow-right"></i>
+            </button><span name="carga" id="carga">
+            </span>
+        </caption>
+        <thead>
+            <tr>
+                <th scope="col">Codigo</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Marca</th>
+                <th scope="col">Linea</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="tabla">
+        </tbody>
+    </table>
+
+</div>
+
+
+<!--Modals    -->
+<!-- Button trigger modal -->
+<!-- Modal -->
+<div class="modal fade" id="ProductoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Producto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <form action="" method="post" id="ingresoproducto" name="ingresoproducto">
+                    <input type="hidden" id="_id" name="_id" value="" />
+                    <div class="row">
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Codigo</label>
+                            <input type="text" class="form-control cero modinput" id="codigo" name="codigo" aria-describedby="emailHelp" />
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Nombre</label>
+                            <input type="text" class="form-control cero modinput" id="nombre" name="nombre" aria-describedby="emailHelp" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Descripcion</label>
+                            <input type="text" class="form-control cero modinput" id="descripcion" name="descripcion" aria-describedby="emailHelp" />
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label for="tipoDocumento" class="form-label ">Marca</label>
+                            <div class="input-group mb-3 " style="max-height: 100px;">
+                                <a class="seleccionable form-select w-100 modselect" data-bs-toggle="dropdown" id="amarca" aria-expanded="false"><span id="textmarca" name="textmarca">Seleccione una Marca</span></a>
+                                <button type="button" class="btn btn-primary ms-5 position-absolute end-0  " style="max-width: 25%;" data-bs-toggle="modal" data-bs-target="#MarcaModal">
+                                    <i class="bi bi-plus-circle"></i>
+                                </button>
+                                <ul class="dropdown-menu w-100 ">
+                                    <input class=" form-control "  id="marcabusqueda" name="marcabusqueda" />
+                                    <span id="marcaselect" name="marcaselect">
+                                    </span>
+                                </ul>
+                            </div>
+                            <input type="hidden" name="marca" id="marca" />
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="mb-3 col-6">
+                            <label for="tipoDocumento" class="form-label">Linea</label>
+                            <div class="input-group mb-3 ">
+                                <a class="seleccionable form-select w-100 modselect" data-bs-toggle="dropdown" id="alinea" aria-expanded="false"><span id="textlinea" name="textlinea">Seleccione una Linea</span></a>
+                                <button type="button" class="btn btn-primary ms-5 position-absolute end-0" style="max-width: 25%;" data-bs-toggle="modal" data-bs-target="#LineaModal">
+                                    <i class="bi bi-plus-circle"></i>
+                                </button>
+                                <ul class="dropdown-menu w-100">
+                                    <input class=" form-control" id="lineabusqueda" name="lineabusqueda" />
+                                    <span id="lineaselect" name="lineaselect">
+                                    </span>
+                                </ul>
+                            </div>
+                            <input type="hidden" name="linea" id="linea" />
+
+                        </div>
+
+                        <div class="mb-3 col-6">
+                            <label for="tipoDocumento" class="form-label">Unidad</label>
+                            <div class="input-group mb-3 ">
+                                <a class="seleccionable form-select w-100 modselect" data-bs-toggle="dropdown" id="aunidad" aria-expanded="false"><span id="textunidad" name="textunidad">Seleccione una Unidad</span></a>
+                                <button type="button" class="btn btn-primary ms-5 position-absolute end-0" style="max-width: 25%;" data-bs-toggle="modal" data-bs-target="#UnidadModal">
+                                    <i class="bi bi-plus-circle"></i>
+                                </button>
+                                <ul class="dropdown-menu w-100">
+                                    <input class=" form-control" id="unidadbusqueda" name="unidadbusqueda" />
+                                    <span id="unidadselect" name="unidadselect">
+                                    </span>
+                                </ul>
+                            </div>
+                            <input type="hidden" name="unidad" id="unidad" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Servicio</label>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" name="serviciocheck">
+                                <label class="form-check-label" for="flexSwitchCheckDefault">¿Es un Servicio?</label>
+                            </div>
+                            <input type="hidden" name="servicio" id="servicio" value="false" />
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Codigo Sunat</label>
+                            <input type="text" class="form-control cero modinput" id="codigosunat" name="codigosunat" aria-describedby="emailHelp" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="mb-3 col-6">
+                            <label for="tipoDocumento" class="form-label">Moneda</label>
+                            <div class="input-group mb-3 ">
+                                <a class="seleccionable form-select w-100 modselect" data-bs-toggle="dropdown" id="amoneda" aria-expanded="false"><span id="textmoneda" name="textmoneda">Seleccione una Unidad</span></a>
+                                <button type="button" class="btn btn-primary ms-5 position-absolute end-0" style="max-width: 25%;" data-bs-toggle="modal" data-bs-target="#MonedaModal">
+                                    <i class="bi bi-plus-circle"></i>
+                                </button>
+                                <ul class="dropdown-menu w-100">
+                                    <input class=" form-control" id="monedabusqueda" name="monedabusqueda" />
+                                    <span id="monedaselect" name="monedaselect">
+                                    </span>
+                                </ul>
+                            </div>
+                            <input type="hidden" name="moneda" id="moneda" />
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label for="tipoDocumento" class="form-label">Impuesto</label>
+                            <div class="input-group mb-3 ">
+                                <a class="seleccionable form-select w-100 modselect" data-bs-toggle="dropdown" id="aimpuestos" aria-expanded="false"><span id="textimpuesto" name="textimpuesto">Seleccione un impuesto</span></a>
+                                <button type="button" class="btn btn-primary ms-5 position-absolute end-0" style="max-width: 25%;" data-bs-toggle="modal" data-bs-target="#ImpuestoModal">
+                                    <i class="bi bi-plus-circle"></i>
+                                </button>
+                                <ul class="dropdown-menu w-100">
+                                    <input class=" form-control" id="impuestobusqueda" name="impuestobusqueda" />
+                                    <span id="impuestoselect" name="impuestoselect">
+                                    </span>
+                                </ul>
+                            </div>
+                            <input type="hidden" name="impuesto" id="impuesto" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Precio</label>
+                            <input type="text" class="form-control cero modinput" id="costo" name="costo" aria-describedby="emailHelp" />
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Garantia (Meses)</label>
+                            <input type="text" class="form-control cero modinput" id="garantia" name="garantia" aria-describedby="emailHelp" />
+                        </div>
+                    </div>
+                    <div class="modal-footer mt-4">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary inhabilitarbtn" id="btnEnviar" data-bs-dismiss="modal">Enviar</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!--Modal MarcaModal-->
+<div class="modal fade" id="MarcaModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Nueva Marca</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="post" id="ingresomarca" name="ingresomarca">
+
+                    <div class="row">
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Nombre</label>
+                            <input type="text" class="form-control cero" id="nombre" name="nombre" aria-describedby="emailHelp" />
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Abreviatura</label>
+                            <input type="text" class="form-control cero" id="abreviatura" name="abreviatura" aria-describedby="emailHelp" />
+                        </div>
+                    </div>
+                    <div class="modal-footer mt-4">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Enviar</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<!--Modal LineaModal-->
+<div class="modal fade" id="LineaModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Nueva Linea</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="post" id="ingresolinea" name="ingresolinea">
+
+                    <div class="row">
+                        <div class="mb-3 col-12">
+                            <label for="descripcionRol" class="form-label">Nombre</label>
+                            <input type="text" class="form-control cero" id="nombre" name="nombre" aria-describedby="emailHelp" />
+                        </div>
+                        <div class="mb-3 col-12">
+                            <label for="descripcionRol" class="form-label">Descripcion</label>
+                            <input type="text" class="form-control cero" id="descripcion" name="descripcion" aria-describedby="emailHelp" />
+                        </div>
+                    </div>
+                    <div class="modal-footer mt-4">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Enviar</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!--Modal UnidadModal-->
+<div class="modal fade" id="UnidadModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Nueva Unidad</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="post" id="ingresounidad" name="ingresounidad">
+
+                    <div class="row">
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Nombre</label>
+                            <input type="text" class="form-control cero" id="nombre" name="nombre" aria-describedby="emailHelp" />
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Abreviatura</label>
+                            <input type="text" class="form-control cero" id="abreviatura" name="abreviatura" aria-describedby="emailHelp" />
+                        </div>
+                    </div>
+                    <div class="modal-footer mt-4">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Enviar</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!--Modal MonedaModal-->
+<div class="modal fade" id="MonedaModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Nueva Moneda</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="post" id="ingresomoneda" name="ingresomoneda">
+
+                    <div class="row">
+                        <div class="mb-3 col-12">
+                            <label for="descripcionRol" class="form-label">Nombre</label>
+                            <input type="text" class="form-control cero" id="nombre" name="nombre" aria-describedby="emailHelp" />
+                        </div>
+                        <div class="mb-3 col-12">
+                            <label for="descripcionRol" class="form-label">Cambio</label>
+                            <input type="number" class="form-control cero" id="cambio" name="cambio" aria-describedby="emailHelp" />
+                        </div>
+                    </div>
+                    <div class="modal-footer mt-4">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Enviar</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!--Modal ImpuestoModal-->
+<div class="modal fade" id="ImpuestoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Nuevo Distrito</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="post" id="ingresoimpuesto" name="ingresoimpuesto">
+
+                    <div class="row">
+                        <div class="mb-3 col-12">
+                            <label for="descripcionRol" class="form-label">Nombre</label>
+                            <input type="text" class="form-control cero" id="nombre" name="nombre" aria-describedby="emailHelp" />
+                        </div>
+                        <div class="mb-3 col-12">
+                            <label for="descripcionRol" class="form-label">Valor</label>
+                            <input type="number" class="form-control cero" id="valor" name="valor" aria-describedby="emailHelp" />
+                        </div>
+                    </div>
+                    <div class="modal-footer mt-4">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Enviar</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+@section ProductosScript{
+    <script>
+        $(document).ready(function () {
+            rellenartabla();
+            rellenarSelectMarca();
+            rellenarSelectLinea();
+            rellenarSelectImpuesto();
+            rellenarSelectUnidad();
+            rellenarSelectMoneda();
+
+        });
+
+
+
+
+    </script>
+
+    <script>
+        $("form[name=ingresomarca]").on('submit', function (e) {
+            e.preventDefault();
+            var datos = new FormData(this);
+            $.ajax({
+                type: "POST",
+                url: "/Almacen/IngresoMarca",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    if (msg == "404") {
+                        alert("fracaso");
+                    } else {
+                        alert("Agregado con exito");
+                        rellenarSelectMarca();
+                    }
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $("form[name=ingresolinea]").on('submit', function (e) {
+            e.preventDefault();
+            var datos = new FormData(this);
+            $.ajax({
+                type: "POST",
+                url: "/Almacen/IngresoLinea",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    if (msg == "404") {
+                        alert("fracaso");
+                    } else {
+                        alert("Agregado con exito");
+                        rellenarSelectLinea();
+                    }
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $("form[name=ingresounidad]").on('submit', function (e) {
+            e.preventDefault();
+            var datos = new FormData(this);
+
+            $.ajax({
+                type: "POST",
+                url: "/Almacen/IngresoUnidad",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    if (msg == "404") {
+                        alert("fracaso");
+                    } else {
+                        alert("Agregado con exito");
+                        rellenarSelectUnidad();
+                    }
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $("form[name=ingresomoneda]").on('submit', function (e) {
+            e.preventDefault();
+            var datos = new FormData(this);
+
+            $.ajax({
+                type: "POST",
+                url: "/Almacen/IngresoMoneda",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    if (msg == "404") {
+                        alert("fracaso");
+                    } else {
+                        alert("Agregado con exito");
+                        rellenarSelectMoneda();
+                    }
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $("form[name=ingresoimpuesto]").on('submit', function (e) {
+            e.preventDefault();
+            var datos = new FormData(this);
+            $.ajax({
+                type: "POST",
+                url: "/Almacen/IngresoImpuesto",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    if (msg == "404") {
+                        alert("fracaso");
+                    } else {
+                        alert("Agregado con exito");
+                        rellenarSelectImpuesto();
+                    }
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $("form[name=ingresoproducto]").on('submit', function (e) {
+            e.preventDefault();
+            var datos = new FormData(this);
+            $.ajax({
+                type: "POST",
+                url: "/Almacen/IngresoProducto",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    if (msg == "404") {
+                        alert("fracaso");
+                    } else {
+                        window.location.reload();
+                    }
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $("input[name='txtbusqueda']").on('keyup', function () {
+            rellenartabla();
+        });
+    </script>
+
+
+
+    <script>
+        function rellenartabla() {
+            var numelement = document.getElementById("numelement").value;
+            var busq = document.getElementById("txtbusqueda").value;
+            var datos = new FormData();
+            datos.append("numelement", numelement);
+            datos.append("busqueda", busq);
+            $.get({
+                type: 'POST',
+                url: "/Almacen/BusquedaProductoLimite",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false,
+                beforeSend: function () {
+                    $("#carga").append(`<div class="d-flex align-items-center">
+                                        <strong>Loading...</strong>
+                                        <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div>
+                                        </div>`
+                    );
+                },
+                success: function (msg) {
+                    $("#carga").html("");
+                    var dato = jQuery.parseJSON(msg);
+                    $("#tabla").html(" ");
+                    for (var i = 0; i < dato.length; i++) {
+                        $("#tabla").append(
+                            "<tr id='r'>" +
+                            "<td >" + dato[i].Codigo + "</td>" +
+                            "<td >" + dato[i].Nombre + "</td>" +
+                            "<td >" + dato[i].Marca.Nombre + "</td>" +
+                            "<td >" + dato[i].Linea.Nombre + "</td>" +
+                            `<td class='d-inline-flex'> <button type='button' class='btn btn-primary btn-sm ' data-bs-toggle='modal' onclick="ProductoId('${dato[i]._id}')" data-bs-target='#ProductoModal'><i class='bi bi-search'></i> </button>` +
+                            `<td class='d-inline-flex'> <button type='button' class='btn btn-primary btn-sm ' data-bs-toggle='modal' onclick="EditProductoId('${dato[i]._id}')" data-bs-target='#ProductoModal'><i class='bi bi-pencil-square'></i> </button>` +
+
+                            "</tr>"
+                        );
+                    }
+
+                }
+            });
+        }
+    </script>
+
+    <script>
+        function BusquedPro() {
+            var busquedapro = document.getElementById("busquedapro").value;
+            var busq = document.getElementById("txtbusqueda").value;
+            var datos = new FormData();
+            datos.append("busquedapro", busquedapro);
+            datos.append("busqueda", busq);
+            $.get({
+                type: 'POST',
+                url: "/Almacen/BuscarProductoId",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false,
+                beforeSend: function () {
+                    $("#carga").append(`<div class="d-flex align-items-center">
+                                        <strong>Loading...</strong>
+                                        <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div>
+                                        </div>`
+                    );
+                },
+                success: function (msg) {
+                    $("#carga").html("");
+                    var dato = jQuery.parseJSON(msg);
+                    $("#tabla").html(" ");
+                    for (var i = 0; i < dato.length; i++) {
+                        $("#tabla").append(
+                            "<tr id='r'>" +
+                            "<td >" + dato[i].Codigo + "</td>" +
+                            "<td >" + dato[i].Nombre + "</td>" +
+                            "<td >" + dato[i].Marca.Nombre + "</td>" +
+                            "<td >" + dato[i].Linea.Nombre + "</td>" +
+                            "<td class='d-inline-flex'> <button type='button' class='btn btn-primary btn-sm ' data-bs-toggle='modal' data-bs-target='#ProductoModal' ><i class='bi bi-search'></i> </button>" +
+                            "<button type='button' class='btn btn-primary btn-sm ms-2' data-bs-toggle='modal' data-bs-target='#ProductoModal'> <i class='bi bi-pencil-square'></i></button>" +
+                            "<button type='button' class='btn btn-danger btn-sm ms-2' data-bs-toggle='modal' data-bs-target='#'> <i class='bi-x-lg'   ></i></button></td>" +
+                            "</tr>"
+                        );
+                    }
+
+                }
+            });
+        }
+    </script>
+
+
+
+
+    <script>
+        $("input[name='marcabusqueda']").on('keyup', function () {
+            var busq = $(this).val();
+            if (busq.length > 0) {
+                $("#marcaselect").html(" ");
+                var datos = new FormData();
+                datos.append("busqueda", busq);
+                $.ajax({
+                    type: "post",
+                    url: "/Almacen/BusquedaMarca",
+                    data: datos,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function (msg) {
+                        var dato = jQuery.parseJSON(msg);
+
+                        $("#marcaselect").html("");
+                        for (var i = 0; i < dato.length; i++) {
+                            $("#marcaselect").append(
+                                `<li><a class="dropdown-item seleccionable" onclick="seleccionablemarca('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre}</a></li>`);
+                        }
+
+                    }
+                });
+            } else {
+                rellenarSelectPersona();
+            }
+        });
+    </script>
+
+    <script>
+        function rellenarSelectMarca() {
+            $.get({
+                type: "post",
+                url: "/Almacen/TablaMarca",
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    var dato = jQuery.parseJSON(msg);
+
+                    $("#marcaselect").html("");
+                    for (var i = 0; i < dato.length; i++) {
+                        $("#marcaselect").append(
+                            `<li><a class="dropdown-item seleccionable" onclick="seleccionablemarca('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre}</a></li>`);
+                    }
+
+                }
+            });
+        }
+    </script>
+    <script>
+        function seleccionablemarca(id, nombre) {
+
+            $("#textmarca").html("");
+
+            $("#textmarca").append(nombre);
+            $("input[name='marca']").val(id);
+        }
+    </script>
+
+    <script>
+        $("input[name='lineabusqueda']").on('keyup', function () {
+            var busq = $(this).val();
+            if (busq.length > 0) {
+                $("#lineaselect").html(" ");
+                var datos = new FormData();
+                datos.append("busqueda", busq);
+                $.ajax({
+                    type: "post",
+                    url: "/Almacen/BusquedaLinea",
+                    data: datos,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function (msg) {
+                        var dato = jQuery.parseJSON(msg);
+
+                        $("#lineaselect").html("");
+                        for (var i = 0; i < dato.length; i++) {
+                            $("#lineaselect").append(
+                                `<li><a class="dropdown-item seleccionable" onclick="seleccionablelinea('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre}</a></li>`);
+                        }
+
+                    }
+                });
+            } else {
+                rellenarSelectLinea();
+            }
+        });
+    </script>
+
+    <script>
+        function rellenarSelectLinea() {
+            $.get({
+                type: "post",
+                url: "/Almacen/TablaLinea",
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    var dato = jQuery.parseJSON(msg);
+
+                    $("#lineaselect").html("");
+                    for (var i = 0; i < dato.length; i++) {
+                        $("#lineaselect").append(
+                            `<li><a class="dropdown-item seleccionable" onclick="seleccionablelinea('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre}</a></li>`);
+                    }
+
+                }
+            });
+        }
+    </script>
+    <script>
+        function seleccionablelinea(id, nombre) {
+            $("#textlinea").html("");
+
+            $("#textlinea").append(nombre);
+            $("input[name='linea']").val(id);
+        }
+    </script>
+
+    <script>
+        $("input[name='unidadbusqueda']").on('keyup', function () {
+            var busq = $(this).val();
+            if (busq.length > 0) {
+                $("#unidadselect").html(" ");
+                var datos = new FormData();
+                datos.append("busqueda", busq);
+
+                $.ajax({
+                    type: "post",
+                    url: "/Almacen/BusquedaUnidad",
+                    data: datos,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function (msg) {
+                        var dato = jQuery.parseJSON(msg);
+
+                        $("#unidadselect").html("");
+                        for (var i = 0; i < dato.length; i++) {
+                            $("#unidadselect").append(
+                                `<li><a class="dropdown-item seleccionable" onclick="seleccionableunidad('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre}</a></li>`);
+                        }
+
+                    }
+                });
+            } else {
+                rellenarSelectUnidad();
+            }
+        });
+    </script>
+
+
+    <script>
+        function rellenarSelectUnidad() {
+            var datos = new FormData();
+            $.get({
+                type: "post",
+                url: "/Almacen/TablaUnidad",
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    var dato = jQuery.parseJSON(msg);
+
+                    $("#unidadselect").html("");
+                    for (var i = 0; i < dato.length; i++) {
+                        $("#unidadselect").append(
+                            `<li><a class="dropdown-item seleccionable" onclick="seleccionableunidad('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre}</a></li>`);
+                    }
+
+                }
+            });
+        }
+    </script>
+
+    <script>
+        function seleccionableunidad(id, nombre) {
+            $("#textunidad").html("");
+
+            $("#textunidad").append(nombre);
+            $("input[name='unidad']").val(id);
+        }
+    </script>
+
+    <script>
+        $("input[name='monedabusqueda']").on('keyup', function () {
+            var busq = $(this).val();
+            if (busq.length > 0) {
+                $("#distritoselect").html(" ");
+                var datos = new FormData();
+                datos.append("busqueda", busq);
+                $.ajax({
+                    type: "post",
+                    url: "/Almacen/BusquedaMoneda",
+                    data: datos,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function (msg) {
+                        var dato = jQuery.parseJSON(msg);
+
+                        $("#monedaselect").html("");
+                        for (var i = 0; i < dato.length; i++) {
+                            $("#monedaselect").append(
+                                `<li><a class="dropdown-item seleccionable" onclick="seleccionablemoneda('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre}</a></li>`);
+                        }
+
+                    }
+                });
+            } else {
+                rellenarSelectMoneda();
+            }
+        });
+    </script>
+
+
+    <script>
+        function rellenarSelectMoneda() {
+            $.get({
+                type: "post",
+                url: "/Almacen/TablaMoneda",
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    var dato = jQuery.parseJSON(msg);
+
+                    $("#monedaselect").html("");
+                    for (var i = 0; i < dato.length; i++) {
+                        $("#monedaselect").append(
+                            `<li><a class="dropdown-item seleccionable" onclick="seleccionablemoneda('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre}</a></li>`);
+                    }
+
+                }
+            });
+        }
+    </script>
+
+    <script>
+        function seleccionablemoneda(id, nombre) {
+            $("#textmoneda").html("");
+
+            $("#textmoneda").append(nombre);
+            $("input[name='moneda']").val(id);
+        }
+    </script>
+
+    <script>
+        $("input[name='impuestobusqueda']").on('keyup', function () {
+            var busq = $(this).val();
+            if (busq.length > 0) {
+                $("#impuestoselect").html(" ");
+                var datos = new FormData();
+                datos.append("busqueda", busq);
+                $.ajax({
+                    type: "post",
+                    url: "/Almacen/TablaImpuesto",
+                    data: datos,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function (msg) {
+                        var dato = jQuery.parseJSON(msg);
+
+                        $("#impuestoselect").html("");
+                        for (var i = 0; i < dato.length; i++) {
+                            $("#impuestoselect").append(
+                                `<li><a class="dropdown-item seleccionable" onclick="seleccionableimpuesto('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre}</a></li>`);
+                        }
+
+                    }
+                });
+            } else {
+                rellenarSelectImpuesto();
+            }
+        });
+    </script>
+
+
+    <script>
+        function rellenarSelectImpuesto() {
+            $.get({
+                type: "post",
+                url: "/Almacen/TablaImpuesto",
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    var dato = jQuery.parseJSON(msg);
+
+                    $("#impuestoselect").html("");
+                    for (var i = 0; i < dato.length; i++) {
+                        $("#impuestoselect").append(
+                            `<li><a class="dropdown-item seleccionable" onclick="seleccionableimpuesto('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre}</a></li>`);
+                    }
+
+                }
+            });
+        }
+    </script>
+
+    <script>
+        function seleccionableimpuesto(id, nombre) {
+            $("#textimpuesto").html("");
+
+            $("#textimpuesto").append(nombre);
+            $("input[name='impuesto']").val(id);
+        }
+    </script>
+
+    <script>
+        $("input[name='serviciocheck']").on('change', function () {
+            if (this.checked) {
+                $("input[name='servicio']").val("true");
+            } else {
+                $("input[name='servicio']").val("false");
+            }
+        });
+
+    </script>
+
+    <script>
+        function movimientosiguiente() {
+
+            var numelement = document.getElementById("numelement").value;
+            var num = parseInt(numelement);
+
+            num += 20;
+            var numinicial = num + 1;
+            var numfinal = num + 20;
+
+            $("#cantelemento").html(" ");
+            $("#cantelemento").append(numinicial + " - " + numfinal);
+            $("input[name='numelement']").val(num);
+            rellenartabla();
+        }
+
+
+        function movimientoanterior() {
+
+            var numelement = document.getElementById("numelement").value;
+            var num = parseInt(numelement);
+
+            if (num != 0) {
+                num -= 20;
+                var numinicial = num + 1;
+                var numfinal = num + 20;
+
+                $("#cantelemento").html(" ");
+                $("#cantelemento").append(numinicial + " - " + numfinal);
+                $("input[name='numelement']").val(num);
+                rellenartabla();
+
+            }
+        }
+
+    </script>
+    <script>
+        function ProductoId(id) {
+            var datos = new FormData();
+            datos.append("id", id);
+            $.ajax({
+                type: "POST",
+                url: "/Almacen/BuscarProductoId",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+
+
+                    var dato = jQuery.parseJSON(msg);
+
+                  $("#codigo").val(dato.Codigo);
+                    $("#nombre").val(dato.Nombre);
+                    $("#costo").val(dato.Precio);
+                    $("#garantia").val(dato.Garantia);
+                    $("#codigosunat").val(dato.CodigoSunat);
+                    $("#descripcion").val(dato.Descripcion);
+                    
+                    seleccionablemarca(dato.Marca._id, dato.Marca.Nombre);
+                    seleccionablelinea(dato.Linea._id, dato.Linea.Nombre);
+                    seleccionableunidad(dato.Unidad._id, dato.Unidad.Nombre);
+                    seleccionablemoneda(dato.Moneda._id, dato.Moneda.Nombre);
+                    seleccionableimpuesto(dato.Impuesto._id, dato.Impuesto.Nombre);
+                   
+                    VisualizarModal();
+                }
+            });
+        }
+    </script>
+    <script>
+        function EditProductoId(id) {
+            var datos = new FormData();
+            datos.append("id", id);
+            $.ajax({
+                type: "POST",
+                url: "/Almacen/BuscarProductoId",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    var dato = jQuery.parseJSON(msg);
+                    $("#codigo").val(dato.Codigo);
+                    $("#nombre").val(dato.Nombre);
+                    $("#costo").val(dato.Precio);
+                    $("#garantia").val(dato.Garantia);
+                    $("#codigosunat").val(dato.CodigoSunat);
+                    $("#descripcion").val(dato.Descripcion);
+                 
+                    seleccionablemarca(dato.Marca._id, dato.Marca.Nombre);
+                    seleccionablelinea(dato.Linea._id, dato.Linea.Nombre);
+                    seleccionableunidad(dato.Unidad._id, dato.Unidad.Nombre);
+                    seleccionablemoneda(dato.Moneda._id, dato.Moneda.Nombre);
+                    seleccionableimpuesto(dato.Impuesto._id, dato.Impuesto.Nombre);
+
+                    EditarModal();
+
+
+
+                }
+
+            });
+        }
+    </script>
+    <script>
+        $("#ingresoproducto").submit(function (e) {
+
+            e.preventDefault();
+
+            var datos = $("#ingresoproducto").serialize();
+            var foto = $('input[name="foto"]')[0].files[0];
+            const infoEmpleado = new FormData();
+            infoEmpleado.append('data', datos);
+            infoEmpleado.append('file', foto);
+
+            $.ajax({
+                url: '../controller/empleadoControlador.php',
+                type: 'POST',
+                data: infoEmpleado,
+                processData: false,
+                success: function (respuestaAjax) {
+                    console.log(respuestaAjax);
+                    if (respuestaAjax == 1) {
+                        console.log('éxito');
+                    } else {
+                        console.log('error');
+                    }
+                }
+            });
+
+        });
+    </script>
+
+        <script src="~/js/ingresovisualizareditar.js"></script>
+
+}
+
+
+

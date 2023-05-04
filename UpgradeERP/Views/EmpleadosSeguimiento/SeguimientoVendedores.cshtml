@@ -1,0 +1,203 @@
+﻿@{
+    ViewData["Title"] = "Seguimiento Vendedor Semaforo";
+}
+
+<div class="text-end me-0 mb-2">
+    <div class="container-fluid row ">
+        <div class="row">
+            <input class="form-control me-0 col-2" style="max-width: 25%;" name="txtbusqueda" id="txtbusqueda" type="text" value="" placeholder="Buscar">
+
+
+            <button type="button" class="btn btn-primary ms-5 end-0 position-relative" style="max-width: 25%;" data-bs-toggle="modal" data-bs-target="#AccionesModal">
+                Agregar Acciones
+            </button>
+        </div>
+    </div>
+</div>
+<div class="row mt-3" id="semaforo">
+    <button type="button" class="btn btn-success ms-5 end-0 text-center " style="max-width: 25%;" onclick="rellenarsemaforoVendedorPersonal();" data-bs-toggle="modal" data-bs-target="#ClienteSeguimientoModal" >
+        <div class="mt-3 mb-3">
+        <h5 class="card-title">Card title</h5>
+        <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+        </div>
+    </button>
+
+</div>
+
+<!--Modeal-->
+<div class="modal fade" id="AccionesModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Nuevo Rol</h5>
+                <but    ton type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></but>
+            </div>
+            <div class="modal-body">
+                <form action="" method="post" id="ingresoacciones" name="ingresoacciones">
+                                        <div class="row">
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Nombre</label>
+                            <input type="text" class="form-control cero modinput" id="nombre" name="nombre" aria-describedby="emailHelp" />
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Puntaje</label>
+                            <input type="number" class="form-control cero modinput" id="puntaje" name="puntaje" aria-describedby="emailHelp" />
+                        </div>
+                    </div>
+
+                    <div class="modal-footer mt-4">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Enviar</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<!--Modeal agregar evento a vendedor-->
+<div class="modal fade" id="EventoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Nuevo Rol</h5>
+                <but ton type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></but>
+            </div>
+            <div class="modal-body">
+                <form action="" method="post" id="ingresoeventovendedor" name="ingresoeventovendedor">
+                    <div class="row">
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Nombre</label>
+                            <input type="text" class="form-control cero modinput" id="nombre" name="nombre" aria-describedby="emailHelp" />
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Puntaje</label>
+                            <input type="number" class="form-control cero modinput" id="puntaje" name="puntaje" aria-describedby="emailHelp" />
+                        </div>
+                    </div>
+
+                    <div class="modal-footer mt-4">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Enviar</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!--ModalAgregar Evento-->
+<div class="modal fade" id="ClienteSeguimientoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Nuevo Rol</h5>
+                <but ton type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></but>
+            </div>
+            <div class="modal-body">
+                    <div class="row">
+    <button type="button" class="btn btn-primary ms-5 end-0 text-center " style="max-width: 25%;" data-bs-toggle="modal" data-bs-target="#ClienteSeguimientoModal">
+        <div class="mt-3 mb-3">
+        <h5 class="card-title">Card title</h5>
+        <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+        </div>
+    </button>
+</div>
+
+                    <div class="modal-footer mt-4">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Enviar</button>
+                    </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+    <script>     
+        var semaforo = [];
+        $(document).ready(function(){
+            rellenarSemaforo();
+        });
+    </script>
+
+    <script>
+        function rellenarSemaforo(){
+
+            $.get({
+            type: "post",
+            url: "/EmpleadosSeguimiento/SemaforoYaTransformado",
+            contentType: false,
+            cache: false,
+            processData: false,
+                beforeSend: function () {
+                    $("#carga").append(`<div class="d-flex align-items-center">
+                                        <strong>Loading...</strong>
+                                        <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div>
+                                        </div>`
+                    );
+                },
+                success: function (msg) {
+                    $("#carga").html("");
+                var dato = jQuery.parseJSON(msg);
+                $("#semaforo").html("");
+
+            }
+            });
+
+        }
+    </script>
+
+    <script>
+    $("form[name=ingresoacciones]").on('submit', function (e) {
+        e.preventDefault();
+        var fecha = Date.now();
+        var fechas = new Date(fecha);
+        var datos = new FormData(this);
+        datos.append("fecha", fechas.toISOString());
+        $.ajax({
+            type: "POST",
+            url: "/EmpleadosSeguimiento/IngresoAcciones",
+            data: datos,
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function (msg) {
+                if (msg == "404") {
+                    alert("fracaso");
+                } else {
+                    window.location.reload();
+                }
+            }
+        });
+    });
+    </script>
+
+    <script>
+        rellenarsemaforoVendedorPersonal(){
+            $.ajax({
+            type: "POST",
+            url: "/EmpleadosSeguimiento/RellenarSemaforoPersonaldelVendedor",
+            data: datos,
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function (msg) {
+                if (msg == "404") {
+                    alert("fracaso");
+                } else {
+                    window.location.reload();
+                }
+            }
+        });
+        }
+    </script>
+

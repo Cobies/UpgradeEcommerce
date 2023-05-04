@@ -1,0 +1,378 @@
+﻿  @{
+    ViewData["Title"] = "Ordenes Pendientes Descarga";
+    ViewData["Scripts"] = "OrdenesPendientesDescargaScript";
+}
+
+<div class="text-end me-0 mb-2">
+    <div class="container-fluid row ">
+        <div class="row">
+            <input class="form-control me-0 col-2" style="max-width: 25%;" name="txtbusqueda" id="txtbusqueda" type="text" value="" placeholder="Buscar">
+            <button type="button" class="btn btn-primary ms-5 end-0 position-relative" style="max-width: 25%;" data-bs-toggle="modal" data-bs-target="#DescargaModal">
+                Agregar Orden
+            </button>
+        </div>
+    </div>
+</div>
+<div class="table-responsive-sm">
+    <table class="table  table-sm table-hover ">
+        <caption class="end-0 mt-2 ">
+            Elementos:
+            <button onclick="movimientoanterior()" class="btn btn-outline-secondary btn-sm rounded-circle">
+                <i class="bi bi-arrow-left"></i>
+            </button>
+            <span id="cantelemento" name="cantelemento">1 - 20</span>
+            <input type="hidden" name="numelement" id="numelement" value="0" />
+            <button onclick="movimientosiguiente()" class="btn btn-outline-secondary btn-sm rounded-circle">
+                <i class="bi bi-arrow-right"></i>
+            </button><span name="carga" id="carga">
+            </span>
+        </caption>
+        <thead>
+            <tr>
+                <th scope="col">Orden de Venta</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Cliente</th>
+                <th scope="col">Fecha Entrega</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="tabla">
+        </tbody>
+    </table>
+</div>
+
+
+<!--Modals    -->
+<!-- Button trigger modal -->
+<!-- Modal -->
+<div class="modal fade" id="DescargaModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Nueva Solicitud Compra</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="post" id="descargaordencompra" name="descargaordencompra">
+                    <div class="row">
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Almacen</label>
+                            <input type="text" class="form-control cero" id="almacen" name="almacen"  />
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Cliente</label>
+                            <input type="text" class="form-control cero" id="cliente" name="cliente" aria-describedby="emailHelp"  />
+                        </div>
+                        <input type="hidden" id="notapedidoid" name="notapedidoid" />
+
+                    </div>
+                    <div class="row">
+                        <div class="mb-3 col-12">
+                            <label for="descripcionRol" class="form-label">Observacion</label>
+                            <input type="text" class="form-control cero" id="observacion" name="observacion" aria-describedby="emailHelp"  />
+                        </div>
+                    </div>
+                    <div class="row">
+                         <div class="table-responsive"> 
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">Codigo</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Cantidad</th>
+                                <th scope="col">Acciones</th>
+                            </tr>
+                        </thead>
+                                <tbody id="tabproductos">
+                        </tbody>
+                    </table>
+                </div>
+                    </div>
+
+                    <div class="modal-footer mt-4">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Enviar</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal Agregar Articulo -->
+<div class="modal fade" id="AgregarArticuloModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Agregar Series</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                    <div class="row">
+                        <div class="mb-3 col-12">
+                            <label for="descripcionRol" class="form-label">Serie</label>
+                            <input type="text" class="form-control cero" id="serie" name="serie" aria-describedby="emailHelp"  />
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Serie</th>
+                                    </tr>
+                                </thead>
+                            <tbody id="tabseries">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer mt-4">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@section OrdenesPendientesDescargaScript{
+
+    <script>
+        var arreglo = [];
+
+
+
+        $(document).ready(function () {
+            rellenartabla();
+
+        });
+
+    </script>
+
+    <script>
+        $("form[name=descargaordencompra]").on('submit', function (e) {
+            e.preventDefault();
+            var datos = new FormData(this);
+            datos.append("cargaYDescargaProductosDetalles", arreglo);
+            $.ajax({
+                type: "POST",
+                url: "/Almacen/IngresoDescargaProductos",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    if (msg == "404") {
+                        alert("fracaso");
+                    } else {
+                        window.location.reload();
+                    }
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $("input[name='txtbusqueda']").on('keyup', function () {
+            rellenartabla();
+        });
+    </script>
+
+
+
+    <script>
+        function rellenartabla() {
+            var numelement = document.getElementById("numelement").value;
+            var busq = document.getElementById("txtbusqueda").value;
+            var datos = new FormData();
+            datos.append("numelement", numelement);
+            datos.append("busqueda", busq);
+            $.get({
+                type: "post",
+                url: "/Almacen/BusquedaDescargaProductoLimite",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false,
+                beforeSend: function () {
+                    $("#carga").append(`<div class="d-flex align-items-center">
+                                <strong>Loading...</strong>
+                                <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div>
+                                </div>`
+                    );
+                },
+                success: function (msg) {
+                    $("#carga").html("");
+                    var dato = jQuery.parseJSON(msg);
+                    $("#tabla").html("");
+                    var x = 0;
+                    for (var i = 0; i < dato.length; i++) {
+
+                        $("#tabla").append(
+
+                            "<tr id='r'>" +
+                            "<td id='r' scope='col'>" + dato[i].Numero + "</td>" +
+                            "<td id='r' scope='col'>" + dato[i].Fecha + "</td>" +
+                            "<td id='r' scope='col'>" + dato[i].Cliente.Persona.Nombre + "</td>" +
+                            "<td id='r' scope='col'>" + dato[i].FechaEntrega + "</td>" +
+                            `<td class='d-inline-flex'> <button type='button' onclick="rellenarparadescargar('${dato[i]._id}')" class='btn btn-primary btn-sm ' data-bs-toggle='modal' data-bs-target='#DescargaModal'><i class='bi bi-search'></i> </button>` +
+                            `<td class='d-inline-flex'> <button type='button' onclick="editparadescargar('${dato[i]._id}')" class='btn btn-primary btn-sm ' data-bs-toggle='modal' data-bs-target='#DescargaModal'><i class='bi bi-pencil-square '></i> </button>` +
+                            "</tr>"
+                        );
+                    }
+
+                }
+            });
+        }
+    </script>
+
+    <script>
+        function rellenarparadescargar(id){
+            var datos = new FormData();
+            datos.append("id", id);
+
+            $.ajax({
+                type: "POST",
+                url: "/Almacen/DescargaProductoModeloRellenar",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    var dato = jQuery.parseJSON(msg);
+                    $("#tabproductos").html("");
+                    $("input[name='almacen']").val(dato.Almacen.Abreviatura);
+                    $("input[name='cliente']").val(dato.Cliente.Persona.Nombre);
+                    $("input[name='notapedidoid']").val(dato._id);
+                    $("input[name='observacion']").val("");
+                    for (var x = 0; x < dato.NotaPedidoDetalle.length; x++) {
+                        
+                        $("#tabproductos").append(
+                            "<tr id='r'>" +
+                            "<td id='r' scope='col'>" + dato.NotaPedidoDetalle[x].Producto.Codigo + "</td>" +
+                            "<td id='r' scope='col'>" + dato.NotaPedidoDetalle[x].Producto.Nombre + "</td>" +
+                            "<td id='r' scope='col'>" + dato.NotaPedidoDetalle[x].Cantidad + "</td>" +
+                            `<td id='r' scope='col'> <button type = 'button'  class= 'btn btn-danger btn-sm ms-2' data-bs-toggle='modal' data-bs-target='#AgregarArticuloModal' > <i class='bi bi-trash'> </i></button> `+
+                            "</tr>"
+                        );
+                    }
+
+                }
+            });
+        }
+    </script>
+    <script>
+        function editparadescargar(id){
+            var datos = new FormData();
+            datos.append("id", id);
+
+            $.ajax({
+                type: "POST",
+                url: "/Almacen/DescargaProductoModeloRellenar",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    var dato = jQuery.parseJSON(msg);
+                    $("#tabproductos").html("");
+                    $("input[name='almacen']").val(dato.Almacen.Abreviatura);
+                    $("input[name='cliente']").val(dato.Cliente.Persona.Nombre);
+                    $("input[name='notapedidoid']").val(dato._id);
+                    $("input[name='observacion']").val("");
+                    for (var x = 0; x < dato.NotaPedidoDetalle.length; x++) {
+
+                        $("#tabproductos").append(
+                            "<tr id='r'>" +
+                            "<td id='r' scope='col'>" + dato.NotaPedidoDetalle[x].Producto.Codigo + "</td>" +
+                            "<td id='r' scope='col'>" + dato.NotaPedidoDetalle[x].Producto.Nombre + "</td>" +
+                            "<td id='r' scope='col'>" + dato.NotaPedidoDetalle[x].Cantidad + "</td>" +
+                            `<td id='r' scope='col'> <button type = 'button'  class= 'btn btn-danger btn-sm ms-2' data-bs-toggle='modal' data-bs-target='#AgregarArticuloModal' > <i class='bi bi-trash'> </i></button> ` +
+                            "</tr>"
+                        );
+                    }
+
+                }
+            });
+        }
+        </script>
+
+
+    <script>
+        $("input[name='serie']").on('keyup', function (e) {
+            if(e.keyCode == 13){
+                var series = document.getElementById("serie").value;
+                var datos = new FormData();
+                datos.append("serie",series);
+                $.ajax({
+                    type: "POST",
+                    url: "/Almacen/IngresoDescargaProductosDetalle",
+                    data: datos,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function (msg) {
+                        var dato = jQuery.parseJSON(msg);
+                        arreglo.push(dato);
+
+                        $("#tabseries").append(
+                            "<tr>"+
+                            "<td id='r' scope='col'>" + dato.Articulo.Serie + "</td>"+
+                            "</tr>"
+                        );
+                    }
+
+
+
+                });
+            }
+        });
+    </script>
+
+        <script>
+            function movimientosiguiente() {
+
+                var numelement = document.getElementById("numelement").value;
+                var num = parseInt(numelement);
+
+                    num += 20;
+                var numinicial = num + 1;
+                var numfinal = num + 20;
+
+                $("#cantelemento").html(" ");
+                $("#cantelemento").append(numinicial + " - " + numfinal);
+                $("input[name='numelement']").val(num);
+                rellenartabla();
+            }
+
+
+            function movimientoanterior() {
+
+                var numelement = document.getElementById("numelement").value;
+                var num = parseInt(numelement);
+
+                if (num != 0) {
+                    num -= 20;
+                    var numinicial = num + 1;
+                    var numfinal = num + 20;
+
+                    $("#cantelemento").html(" ");
+                    $("#cantelemento").append(numinicial + " - "+numfinal);
+                    $("input[name='numelement']").val(num);
+                    rellenartabla();
+
+                }
+            }
+
+    </script>
+
+   
+}

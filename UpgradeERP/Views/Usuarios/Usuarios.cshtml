@@ -1,0 +1,304 @@
+﻿@{
+    ViewData["Title"] = "Usuarios";
+    ViewData["Scripts"] = "UsuariosScript";
+}
+<div class="text-end me-0 mb-2">
+    <div class="container-fluid row ">
+        <div class="row">
+            <input class="form-control me-0 col-2" style="max-width: 25%;" name="txtbusqueda" id="txtbusqueda" type="text" value="" placeholder="Buscar">
+
+
+            <button type="button" class="btn btn-primary ms-5 end-0 position-relative" style="max-width: 25%;" data-bs-toggle="modal" data-bs-target="#VendedorModal">
+                Agregar Vendedor
+            </button>
+        </div>
+    </div>
+</div>
+<div class="table-responsive-sm">
+
+    <table class="table  table-sm table-hover ">
+        <caption class="end-0 mt-2 ">
+            Elementos:
+            <button onclick="movimientoanterior()" class="btn btn-outline-secondary btn-sm rounded-circle">
+                <i class="bi bi-arrow-left"></i>
+            </button>
+            <span id="cantelemento" name="cantelemento">1 - 20</span>
+            <input type="hidden" name="numelement" id="numelement" value="0" />
+            <button onclick="movimientosiguiente()" class="btn btn-outline-secondary btn-sm rounded-circle">
+                <i class="bi bi-arrow-right"></i>
+            </button><span name="carga" id="carga">
+            </span>
+        </caption>
+        <thead>
+            <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Usuario</th>
+                <th scope="col">Identidad</th>
+                <th scope="col">Documento</th>
+                <th scope="col">Rol</th>
+                <th scope="col">Nivel</th>
+            </tr>
+        </thead>
+        <tbody id="tabla">
+        </tbody>
+    </table>
+
+</div>
+
+
+
+
+
+
+
+<!--Modals    -->
+<!-- Button trigger modal -->
+<!-- Modal -->
+<div class="modal fade" id="VendedorModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Nueva Solicitud Compra</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="post" id="agregarusuariovendedor" name="agregarusuariovendedor">
+                    <div class="row">
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Persona</label>
+                            <input type="text" class="form-control cero modinput" id="identificador" name="identificador" aria-describedby="emailHelp" />
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Usuario</label>
+                            <input type="text" class="form-control cero modinput" id="usuario" name="usuario" aria-describedby="emailHelp" />
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control cero modinput" id="contrasena" name="contrasena" aria-describedby="emailHelp" />
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label for="tipoDocumento" class="form-label ">Almacen</label>
+                            <div class="input-group mb-3 " style="max-height: 100px;">
+                                <a class="seleccionable form-select w-100 modselect" data-bs-toggle="dropdown" id="aalmacen" aria-expanded="false"><span id="textalmacen" name="textalmacen">Seleccione una Almacen</span></a>
+                                <ul class="dropdown-menu w-100 ">
+                                    <input class=" form-control " id="almacenbusqueda" name="almacenbusqueda" />
+                                    <span id="almacenselect" name="almacenselect">
+                                    </span>
+                                </ul>
+                            </div>
+                            <input type="hidden" name="almacen" id="almacen" />
+                        </div>
+                    </div>
+
+                    <div class="modal-footer mt-4">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Enviar</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+@section UsuariosScript{
+    <script>
+        $(document).ready(function () {
+            rellenartabla();
+            rellenarSelectPersona();
+            rellenarSelectAlmacen();
+        });
+    </script>
+
+
+    <script>
+        $("form[name=agregarusuariovendedor]").on('submit', function (e) {
+            e.preventDefault();
+            var datos = new FormData(this);
+            $.ajax({
+                type: "POST",
+                url: "/Usuarios/AgregarVendedor",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    if (msg == "404") {
+                        alert("fracaso");
+                    } else {
+                        window.location.reload();
+                    }
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $("input[name='txtbusqueda']").on('keyup', function () {
+            rellenarSelectPersona();
+                rellenartabla();
+            
+        });
+    </script>
+
+
+
+    <script>
+        function rellenartabla() {
+                        var numelement = document.getElementById("numelement").value;
+            var busq = document.getElementById("txtbusqueda").value;
+            var datos = new FormData();
+            datos.append("numelement", numelement);
+            datos.append("busqueda", busq);
+            $.get({
+                type: "post",
+                url: "/Usuarios/BusquedaEmpleadoLimite",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false,
+                beforeSend: function () {
+                    $("#carga").append(`<div class="d-flex align-items-center">
+                                                <strong>Loading...</strong>
+                                                <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div>
+                                                </div>`
+                    );
+                },
+                success: function (msg) {
+                    $("#carga").html("");
+                    var dato = jQuery.parseJSON(msg);
+                    $("#tabla").html("");
+                    for (var i = 0; i < dato.length; i++) {
+                        $("#tabla").append(
+                            "<tr id='r'>" +
+                            "<td id='r' scope='col'>" + dato[i].Persona.Nombre + "</td>" +
+                            "<td id='r' scope='col'>" + dato[i].NombreDeUsuario + "</td>" +
+                            "<td id='r' scope='col'>" + dato[i].Persona.DocumentoIdentidad + "</td>" +
+                            "<td id='r' scope='col'>" + dato[i].Persona.TipoDocumentoIdentidad.Nombre + "</td>" +
+                            "<td id='r' scope='col'>" + dato[i].RolDeUsuario.Nombre + "</td>" +
+                            "<td id='r' scope='col'>" + dato[i].RolDeUsuario.Nivel + "</td>" +
+                            "</tr>"
+                        );
+                    }
+
+                }
+            });
+        }
+    </script>
+
+    <script>
+        $("input[name='almacenbusqueda']").on('keyup', function () {
+            var busq = $(this).val();
+            if (busq.length > 0) {
+                $("#almacenselect").html(" ");
+                var datos = new FormData();
+                datos.append("busqueda", busq);
+                $.ajax({
+                    type: "post",
+                    url: "/Almacen/BusquedaAlmacen",
+                    data: datos,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function (msg) {
+                        var dato = jQuery.parseJSON(msg);
+
+                        $("#almacenselect").html("");
+                        for (var i = 0; i < dato.length; i++) {
+                            $("#almacenselect").append(
+                                `<li><a class="dropdown-item seleccionable" onclick="seleccionablealmacen('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre}</a></li>`);
+                        }
+
+                    }
+                });
+            } else {
+                rellenarSelectAlmacen();
+            }
+        });
+    </script>
+
+
+    <script>
+        function rellenarSelectAlmacen() {
+            $.get({
+                type: "post",
+                url: "/Almacen/TablaAlmacen",
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    var dato = jQuery.parseJSON(msg);
+
+                    $("#almacenselect").html("");
+                    for (var i = 0; i < dato.length; i++) {
+                        $("#almacenselect").append(
+                            `<li><a class="dropdown-item seleccionable" onclick="seleccionablealmacen('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre}</a></li>`);
+                    }
+
+                }
+            });
+        }
+    </script>
+
+    <script>
+        function seleccionablealmacen(id, nombre) {
+            $("#textalmacen").html("");
+
+            $("#textalmacen").append(nombre);
+            $("input[name='almacen']").val(id);
+        }
+    </script>
+
+
+
+    <script>
+        $("input[name='personabusqueda']").on('keyup', function () {
+            rellenarSelectPersona();
+        });
+    </script>
+
+
+    <script>
+        function rellenarSelectPersona() {
+            var busqueda = document.getElementById("personabusqueda").value;
+            var datos = new FormData();
+            datos.append("personabusqueda", busqueda);
+
+            $.get({
+                type: "post",
+                url: "/Usuarios/GetAllPersonaBusqueda",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    var dato = jQuery.parseJSON(msg);
+                    $("#personaselect").html("");
+                    for (var i = 0; i < dato.length; i++) {
+                        alert(dato[i].Persona.Nombre);
+                        $("#personaselect").append(
+                            `<li><a class="dropdown-item seleccionable" onclick="seleccionablepersonas('${dato[i]._id}', '${dato[i].Persona.Nombre}')" >${dato[i].Persona.Nombre}</a></li>`);
+                    }
+
+                }
+            });
+        }
+    </script>
+
+    <script>
+        function seleccionablepersonas(id, nombre) {
+            $("#textpersona").html("");
+
+            $("#textpersona").append(nombre);
+            $("input[name='persona']").val(id);
+        }
+    </script>
+
+
+}

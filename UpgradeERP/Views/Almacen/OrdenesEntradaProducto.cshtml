@@ -1,0 +1,410 @@
+﻿@{
+    ViewData["Title"] = "Ordenes Entrada de Productos";
+    ViewData["Scripts"] = "OrdenesEntradaProductosScript";
+}
+
+<div class="text-end me-0 mb-2">
+    <div class="container-fluid row ">
+        <div class="row">
+            <input class="form-control me-0 col-2" style="max-width: 25%;" name="txtbusqueda" id="txtbusqueda" type="text" value="" placeholder="Buscar">
+            
+
+            <button type="button" class="btn btn-primary ms-5 end-0 position-relative" style="max-width: 25%;" data-bs-toggle="modal" data-bs-target="#EntradaModal">
+                Agregar Entrada Producto
+            </button>
+        </div>
+    </div>
+</div>
+<div class="table-responsive-sm">
+
+    <table class="table  table-sm table-hover ">
+        <caption class="end-0 mt-2 ">
+            Elementos:
+            <button onclick="movimientoanterior()" class="btn btn-outline-secondary btn-sm rounded-circle">
+                    <i class="bi bi-arrow-left"></i>
+                </button>
+             <span id="cantelemento" name="cantelemento">1 - 20</span>
+            <input type="hidden" name="numelement" id="numelement" value="0" />
+            <button onclick="movimientosiguiente()" class="btn btn-outline-secondary btn-sm rounded-circle">
+                    <i class="bi bi-arrow-right"></i>
+            </button><span name="carga" id="carga">
+            </span>
+        </caption>
+        <thead>
+            <tr>  
+                <th scope="col">Documento</th>
+                <th scope="col">Proveedor</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Fecha Llegada</th>
+                <th scope="col">Acciones</th>
+
+            </tr>
+        </thead>
+        <tbody id="tabla">
+        </tbody>
+    </table>
+</div>
+
+
+<!--Modals    -->
+<!-- Button trigger modal -->
+<!-- Modal -->
+<div class="modal fade" id="EntradaModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">                                         
+                <h5 class="modal-title" id="staticBackdropLabel">Entrada de Productos</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="post" id="ingresoentradaproducto" name="ingresoentradaproducto">
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Factura</label>
+                            <input type="text" class="form-control cero" id="factura" name="factura" aria-describedby="emailHelp" />
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Fecha</label>
+                            <input type="datetime" class="form-control cero" id="fecha" name="fecha" value="" aria-describedby="emailHelp" />
+                        </div>
+                    
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Almacen</label>
+                            <input type="text" class="form-control cero" id="almacen" name="almacen" aria-describedby="emailHelp" readonly/>
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Proveedor</label>
+                            <input type="text" class="form-contro l cero" id="proveedor" name="proveedor" aria-describedby="emailHelp" />
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Fecha</label>
+                            <input type="text" class="form-control cero" id="fecha" name="fecha" value="" aria-describedby="emailHelp" />
+                        </div>
+
+                    <div class="row">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Codigo</th>
+                                        <th scope="col">Nombre</th>
+                                        <th scope="col">Cantidad</th>
+                                        <th scope="col">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabproductos">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+
+                    <div class="modal-footer mt-4">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Enviar</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!--Modals    -->
+<!-- Button trigger modal -->
+<!-- Modal -->
+<div class="modal fade" id="ModalSeriesProducto" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Entrada de Productos</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                        <div class="mb-3 col-12">
+                            <label for="descripcionRol" class="form-label">Producto</label>
+                            <input type="text" class="form-control cero" id="productoelegido" name="productoelegido" aria-describedby="emailHelp" readonly/>
+                            <input type="hidden" name="productoid" id="productoid" />
+                        </div>
+
+                        <div class="mb-3 col-12">
+                            <label class="form-label">Series</label>
+                        <input type="text" class="form-control cero" id="serie" name="serie" />
+                        <button type="button" class="btn btn-primary ms-5 position-absolute end-0" onclick="enviarseries()" style="max-width: 25%;">
+                            <i class="bi bi-send"></i>
+                        </button>
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label class="form-label">Series en cantidad</label>
+                            <input type="text" class="form-control cero" id="seriemasiva" name="seriemasiva" />
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label class="form-label">Series en cantidad</label>
+                            <input type="text" class="form-control cero" id="cantidadmasiva" name="cantidadmasiva" />
+                            <button type="button" class="btn btn-primary ms-5 position-absolute end-0" onclick="seriesmasivas()" style="max-width: 25%;">
+                            <i class="bi bi-send"></i>
+                        </button>
+                        </div>
+                    <div class="row">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Serie</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabSeries">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer mt-4">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+@section OrdenesEntradaProductosScript{
+
+    <script>
+        var arreglo = [];
+        $(document).ready(function () {
+            colocarfechas();
+
+            rellenartabla();
+            rellenarSelectMarca();
+            rellenarSelectLinea();
+            rellenarSelectUnidad();
+            rellenarSelectMoneda();
+            rellenarSelectImpuesto();
+        });
+    </script>
+
+    <script>
+        $("form[name=ingresoentradaproducto]").on('submit', function (e) {
+            e.preventDefault();
+            var datos = new FormData(this);
+            $.ajax({
+                type: "POST",
+                url: "/Almacen/IngresoEntradaProducto",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    if (msg == "404") {
+                        alert("fracaso");
+                    } else {
+                        window.location.reload();
+                    }
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $("input[name='txtbusqueda']").on('keyup', function () {
+           rellenartabla();
+        });
+    </script>
+
+
+
+    <script>
+        function rellenartabla() {
+            var numelement = document.getElementById("numelement").value;
+            var busq = document.getElementById("txtbusqueda").value;
+            var datos = new FormData();
+            datos.append("numelement", numelement);
+            datos.append("busqueda", busq);
+            $.get({
+                type: "post",
+                url: "/Almacen/BusquedaEntradaProductoLimite",
+                contentType: false,
+                cache: false,
+                processData: false,
+                                beforeSend: function () {
+                    $("#carga").append(`<div class="d-flex align-items-center">
+                                <strong>Loading...</strong>
+                                <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div>
+                                </div>`
+                    );
+                },
+                success: function (msg) {
+                    $("#carga").html("");
+                    var dato = jQuery.parseJSON(msg);
+                    $("#tabla").html("");
+                    var x = 0;
+                    for (var i = 0; i < dato.length; i++) {
+
+                        $("#tabla").append(
+
+                            "<tr id='r'>" +
+                            "<td id='r' scope='col'>" + dato[i].Codigo + "</td>" +
+                            "<td id='r' scope='col'>" + dato[i].Nombre + "</td>" +
+                            "<td id='r' scope='col'>" + dato[i].Descripcion + "</td>" +
+                            "<td id='r' scope='col'>" + dato[i].Marca.Nombre + "</td>" +
+                            "<td id='r' scope='col'>" + dato[i].Linea.Nombre + "</td>" +
+                            `<td id='r' scope='col'> <button type='button' onclick="rellenarparaentrada('${dato[i]._id}')" class='btn btn-primary btn-sm ' data-bs-toggle='modal' data-bs-target='#DescargaModal'><i class='bi bi-search'></i> </button>` +
+
+                            "</tr>"
+                        );
+                    }
+
+                }
+            });
+        }
+    </script>
+
+    <script>
+        function rellenarparaentrada(id){
+            $.get({
+                type: "post",
+                url: "/Almacen/RellenarParaIngreso",
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    var dato = jQuery.parseJSON(msg);
+                    $("input[name='factura']").val(dato.Numero)
+                    $("input[name='almacen']").val(dato.Almacen.Abreviatura);
+                    $("input[name='proveedor']").val(dato.Proveedor.Persona.Nombre);
+                    $("#tabproductos").html(" ");
+                    for (var x = 0; x < dato.FacturasCompraDetalles.length; x++){
+                        $("#tabproductos").append(
+
+                            "<tr id='r'>" +
+                            "<td id='r' scope='col'>" + dato.FacturasCompraDetalles[x].Producto.Codigo + "</td>" +
+                            "<td id='r' scope='col'>" + dato.FacturasCompraDetalles[x].Producto.Nombre + "</td>" +
+                            "<td id='r' scope='col'>" + dato.FacturasCompraDetalles[x].Cantidad + "</td>" +
+                            `<td id='r' scope='col'> <button type='button' onclick="rellenarseriesconproducto('${dato.FacturasCompraDetalles[x].Producto._id}')" class='btn btn-primary btn-sm ' data-bs-toggle='modal' data-bs-target='#ModalSeriesProducto'><i class='bi bi-box-arrow-down'></i> </button>` +
+
+                            "</tr>"
+                        );
+                    }
+
+
+                }
+            });
+        }
+    </script>
+
+    <script>
+        function rellenarseriesconproducto(id){
+            $.get({
+                type: "post",
+                url: "/Almacen/BuscarProductoId",
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    var dato = jQuery.parseJSON(msg);
+                    $("input[name='productoelegido']").val(dato.Nombre);
+                    $("input[name='productoid']").val(dato._id);
+                    for (var i = 0; i < arreglo.length; i++) {
+                        if (dato.Articulo.Producto._id == dato._id) {
+                            "<tr id='r'>" +
+                                "<td id='r' scope='col'>" + dato.Articulo.Serie + "</td>" +
+                                "</tr>"
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+
+    <script>
+        
+        function enviarseries(){
+            var productoid = document.getElementById("productoid").value;
+            var serie = document.getElementById("serie").value;
+            var datos = new FormData();
+
+            datos.append("producto", productoid);
+            datos.append("serie", serie);
+            $.get({
+                type: "post",
+                url: "/Almacen/IngresoSerie",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    var dato = jQuery.parseJSON(msg);
+                    arreglo.push(dato);
+                    for(var i = 0 ; i < arreglo.length; i++){
+                        if (dato.Articulo.Producto._id == productoid) {
+                        "<tr id='r'>" +
+                        "<td id='r' scope='col'>" + dato.Articulo.Serie + "</td>" +
+                        "</tr>"
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+
+    <script>
+        function seriesmasivas(){
+            var productoid = document.getElementById("productoid").value;
+            var seriemasivo = document.getElementById("seriemasiva").value;
+            var cantidadmasiva = document.getElementById("cantidadmasiva").value;
+            var datos = new FormData();
+            datos.append("producto", productoid);
+            datos.append("serie", seriemasivo);
+            datos.append("cantidad", cantidadmasiva);
+            $.get({
+                type: "post",
+                url: "/Almacen/IngresoSerieMasivo",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    var dato = jQuery.parseJSON(msg);
+                    for(var i = 0 ; i< dato.length; i++){
+                        arreglo.push(dato[i]);
+                    }
+                    for (var i = 0; i < arreglo.length; i++) {
+                        if (dato.Articulo.Producto._id == productoid) {
+                            "<tr id='r'>" +
+                                "<td id='r' scope='col'>" + dato.Articulo.Serie + "</td>" +
+                                "</tr>"
+                        }
+                    }
+                }
+            });
+                
+        }
+
+
+    </script>
+
+
+    <script>
+        function colocarfechas(){
+            const fech = new Date();
+            const fecha = fech.toJSON();
+            alert(fecha);
+            $("input[name='fecha']").val(fecha);
+        }
+    </script>
+
+
+    <script>
+        $("input[name'serie']").on('keyup', function(e){
+            alert(e.code);
+            if(e.code == "Enter"){
+                
+                enviarseries();
+            }
+        });
+    </script>
+
+
+}

@@ -1,0 +1,14 @@
+[
+  {
+    "LastDownloadTime": "2023-03-30T14:22:23.5517526Z",
+    "LocalPath": "JSON\\Schemas\\5546853c-3ed9-4c4f-b645-ff5be6ab9119.json",
+    "OriginalPath": "http://json-schema.org/draft-04/schema",
+    "ExpirationTime": "2023-03-31T14:22:23.8670042Z"
+  },
+  {
+    "LastDownloadTime": "2023-03-28T14:27:14.4975464Z",
+    "LocalPath": "JSON\\Schemas\\6af88164-c55a-47fc-9e70-a6a5acf5e072.json",
+    "OriginalPath": "https://json.schemastore.org/appsettings.json",
+    "ExpirationTime": "2023-04-04T14:27:15.8324948Z"
+  }
+]

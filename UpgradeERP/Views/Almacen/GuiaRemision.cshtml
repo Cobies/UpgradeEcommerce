@@ -1,0 +1,272 @@
+﻿@{
+    ViewData["Title"] = "Guia de Remision";
+    ViewData["Scripts"] = "GuiasRemisionScript";
+}
+
+<div class="text-end me-0 mb-2 ">
+    <div class="container-fluid row">
+        <div class="row">
+            <input class="form-control me-0 col-2" style="max-width: 25%;" name="txtbusqueda" id="txtbusqueda" type="text" placeholder="Buscar">
+            <button type="button" class="btn btn-primary ms-5 position-absolute end-0 me-4" style="max-width: 25%;" data-bs-toggle="modal" data-bs-target="#GuiaremisionModal">
+                Agregar Guia de Remision
+            </button>
+        </div>
+    </div>
+</div>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Nº Serie</th>
+                <th scope="col">Nº Guia</th>
+                <th scope="col">Alm Origen</th>
+                <th scope="col">Alm Destino</th>
+                <th scope="col">Fecha Emision</th>
+                <th scope="col">Recepcionado</th>
+                <th scope="col">Recepcionado por</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="tabla">
+        @*<td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>
+            <button class="btn btn-success">Editar</button>
+            <button class="btn btn-danger">Eliminar</button>
+        </td>*@
+        </tbody>
+    </table>
+</div>
+
+<!--Modal MarcaModal-->
+<div class="modal fade" id="GuiaremisionModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Nueva Marca</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="post" id="ingresoguiaremision" name="ingresoguiaremision" class="d-flex justify-content-evenly gap-2">
+                    <div class="col-6">
+                        <div class="mb-3 col-12">
+                            <label for="descripcionRol" class="form-label">Nº Serie</label>
+                            <input type="text" class="form-control cero" id="n-serie" name="n-serie" aria-describedby="emailHelp" />
+                        </div>
+                        <div class="mb-3 col-12">
+                            <label class="form-label">Origen</label>
+                            <input type="text" class="form-control" id="almacenorigen" name="almacenorigen" />
+                        </div>
+                        <div class="mb-3 col-12">
+                            <label for="tipoDocumento" class="form-label">Destino</label>
+                            <div class="input-group mb-3 ">
+                                <a class="seleccionable form-select w-100 text-decoration-none" data-bs-toggle="dropdown" aria-expanded="false"><span id="textdestino" name="textdestino">Seleccione un Destino</span></a>
+                                <ul class="dropdown-menu w-100">
+                                    <input class=" form-control" id="destinobusqueda" name="destinobusqueda" />
+                                    <span id="destinoselect" name="destinoselect"></span>
+                                </ul>
+                            </div>
+                            <input type="hidden" name="destino" id="destino" />
+                        </div>
+                        <div class="mb-3 col-12">
+                            <label for="" class="form-label">Fecha de Traslado</label>
+                            <input type="datetime-local" class="form-control cero" id="" name="" aria-describedby="emailHelp" />
+                        </div>
+                        <div class="mb-3 col-12">
+                            <label for="" class="form-label">Tipo de Transporte</label>
+                            <input type="text" class="form-control" id="tipo-transporte" name="tipo-transporte" />
+                        </div>
+                        <div class="mb-3 col-12">
+                            <label for="" class="form-label">Motivo de Traslado</label>
+                            <input type="text" class="form-control" id="motivo-traslado" name="" />
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="mb-3 col-12">
+                            <label for="" class="form-label">Transportista</label>
+                            <input type="text" class="form-control" id="transportista" name="transportista" />
+                        </div>
+                        <div class="mb-3 col-12">
+                            <label for="" class="form-label">Vehiculo</label>
+                            <input type="text" class="form-control" id="vehiculo" name="vehiculo" />
+                        </div>
+                        <div class="mb-3 col-12">
+                            <label for="" class="form-label">Chofer</label>
+                            <input type="text" class="form-control" id="chofer" name="chofer" />
+                        </div>
+                        <div class="mb-3 col-12">
+                            <label for="" class="form-label">Recepcionado</label>
+                            <input type="text" class="form-control" id="recepcionado" name="recepcionado" />
+                        </div>
+                        <div class="mb-3 col-12">
+                            <label for="" class="form-label">Observacion</label>
+                            <input type="text" class="form-control" id="observacion" name="observacion" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer mt-4">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Enviar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section GuiasRemisionScript{
+    
+        <script>
+        $(document).ready(function () {
+            rellenartabla();
+        });
+
+    
+
+
+    </script>
+
+    <script>
+        $("input[name='destinobusqueda']").on('keyup', function () {
+            var busq = $(this).val();
+            if (busq.length > 0) {
+                $("#destinoselect").html(" ");
+                var datos = new FormData();
+                datos.append("busqueda", busq);
+                $.ajax({
+                    type: "post",
+                    url: "/Almacen/BusquedaAlmacenesDisponibles",
+                    data: datos,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function (msg) {
+                        var dato = jQuery.parseJSON(msg);
+
+                        $("#destinoselect").html("");
+                        for (var i = 0; i < dato.length; i++) {
+                            $("#destinoselect").append(
+                                `<li><a class="dropdown-item seleccionable" onclick="seleccionablemoneda('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre}</a></li>`);
+                        }
+
+                    }
+                });
+            } else {
+                rellenarSelectMoneda();
+            }
+        });
+    </script>
+
+
+    <script>
+        function rellenarSelectMoneda() {
+            $.get({
+                type: "post",
+                url: "/Almacen/AlmacenesDisponibles",
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    var dato = jQuery.parseJSON(msg);
+
+                    $("#destinoselect").html("");
+                    for (var i = 0; i < dato.length; i++) {
+                        $("#destinoselect").append(
+                            `<li><a class="dropdown-item seleccionable" onclick="seleccionabledestino('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre} / ${dato[i].Abreviatura}</a></li>`);
+                    }
+
+                }
+            });
+        }
+    </script>
+
+    <script>
+        function seleccionabledestino(id, nombre) {
+            $("#textdestino").html("");
+
+            $("#textdestino").append(nombre);
+            $("input[name='destino']").val(id);
+        }
+    </script>
+
+        <script>
+            function rellenartabla() {
+                $.get({
+                    type: 'POST',
+                    url: "/Almacen/TablaGuiasRemision",
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function (msg) {
+                        var dato = jQuery.parseJSON(msg);
+                        $("#tabla").html(" ");
+                        for (var i = 0; i < dato.length; i++) {
+                            $("#tabla").append(
+                                "<tr id='r'>" +
+                                "<td >" + dato[i].Serie +" "+ dato[i].Numero + "</td>" +
+                                "<td >" + dato[i].Almacen.Abreviatura + "</td>" +
+                                "<td >" + dato[i].Almacen.Abreviatura + "</td>" +
+                                "<td >" + dato[i].Fecha + "</td>" +
+                                "<td >" + dato[i].FechaTraslado + "</td>"+
+                                "<td >" + dato[i].Recepcionado + "</td>"+
+                                "<td > <button type='button' class='btn btn-primary btn-sm ' data-bs-toggle='modal' data-bs-target='#GuiaremisionModal'><i class='bi bi-search'></i> </button>" +
+                                "<button type='button' class='btn btn-primary btn-sm ms-2' data-bs-toggle='modal' data-bs-target='#GuiaremisionModal'> <i class='bi bi-pencil-square'></i></button>" +
+                                "<button type='button' class='btn btn-danger btn-sm ms-2' data-bs-toggle='modal' data-bs-target='#GuiaremisionModal'> <i class='bi bi-trash'   ></i></button></td>" +
+                                "</tr>"
+                            );
+                        }
+
+                    }
+                });
+            }
+    </script>
+        <script>
+        $("input[name='txtbusqueda']").on('keyup', function () {
+            var busq = $(this).val();
+            if (busq.length > 0) {
+                $("#tabla").html(" ");
+                var datos = new FormData();
+                datos.append("busqueda", busq);
+                $.ajax({
+                    type: "post",
+                    url: "/Almacen/BusquedaGuiasRemision",
+                    data: datos,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function (msg) {
+                        var dato = jQuery.parseJSON(msg);
+                        $("#tabla").html("");
+                        for (var i = 0; i < dato.length; i++) {
+
+                            $("#tabla").append(
+                                "<tr id='r'>" +
+                                "<td >" + dato[i].Serie + " " + dato[i].Numero + "</td>" +
+                                "<td >" + dato[i].Almacen.Abreviatura + "</td>" +
+                                "<td >" + dato[i].Almacen.Abreviatura + "</td>" +
+                                "<td >" + dato[i].Fecha + "</td>" +
+                                "<td >" + dato[i].FechaTraslado + "</td>" +
+                                "<td >" + dato[i].Recepcionado + "</td>" +
+                                "<td > <button type='button' class='btn btn-primary btn-sm ' data-bs-toggle='modal' data-bs-target='#GuiaremisionModal'><i class='bi bi-search'></i> </button>" +
+                                "<button type='button' class='btn btn-primary btn-sm ms-2' data-bs-toggle='modal' data-bs-target='#GuiaremisionModal'> <i class='bi bi-pencil-square'></i></button>" +
+                                "<button type='button' class='btn btn-danger btn-sm ms-2' data-bs-toggle='modal' data-bs-target='#GuiaremisionModal'> <i class='bi bi-trash'   ></i></button></td>" +
+                                "</tr>"
+                            );
+                        }
+
+                    }
+                });
+            } else {
+                rellenartabla();
+            }
+        });
+    </script>
+
+}

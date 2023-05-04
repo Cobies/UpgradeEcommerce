@@ -1,0 +1,164 @@
+﻿@{
+    ViewData["Title"] = "Seguimiento de Clientes";
+
+}
+<div class="text-end me-0 mb-2">
+    <div class="container-fluid row ">
+        <div class="row">
+            <input class="form-control me-0 col-2" style="max-width: 25%;" name="txtbusqueda" id="txtbusqueda" type="text" value="" placeholder="Buscar">
+
+
+            <button type="button" class="btn btn-primary ms-5 end-0 position-relative" style="max-width: 25%;" data-bs-toggle="modal" data-bs-target="#NuevoSeguimiento">
+                Agregar Cliente
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-3">
+        <div class="card text-white bg-danger mb-3" style="max-width: 18rem;">
+            <div class="card-body">
+                <a role="button" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <p class="card-text">Nombre de Cliente:</p>
+                    <p class="card-text">Nombre de Vendedor:</p>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card text-dark bg-warning mb-3" style="max-width: 18rem;">
+            <div class="card-body">
+                <a role="button" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <p class="card-text">Nombre de Cliente:</p>
+                    <p class="card-text">Nombre de Vendedor:</p>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card text-white bg-success mb-3" style="max-width: 18rem;">
+            <div class="card-body">
+                <a role="button" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <p class="card-text">Nombre de Cliente:</p>
+                    <p class="card-text">Nombre de Vendedor:</p>
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!--MODAL-->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog  modal-dialog-centered  modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Detalle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="card text-white bg-danger mb-3" style="max-width: 18rem;">
+                            <div class="card-body">
+                                <a role="button" data-bs-toggle="modal" data-bs-target="#DetalleModal">
+                                    <p class="card-text">Nombre de Cliente:</p>
+                                    <p class="card-text">Nombre de Vendedor:</p>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="card text-dark bg-warning mb-3" style="max-width: 18rem;">
+                            <div class="card-body">
+                                <a role="button" data-bs-toggle="modal" data-bs-target="#DetalleModal">
+                                    <p class="card-text">Nombre de Cliente:</p>
+                                    <p class="card-text">Nombre de Vendedor:</p>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="card text-white bg-success mb-3" style="max-width: 18rem;">
+                            <div class="card-body">
+                                <a role="button" data-bs-toggle="modal" data-bs-target="#DetalleModal">
+                                    <p class="card-text">Nombre de Cliente:</p>
+                                    <p class="card-text">Nombre de Vendedor:</p>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--MODALNUEVO-->
+<div class="modal fade" id="NuevoSeguimiento" tabindex="-1" aria-labelledby="NuevoSeguimiento" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Nuevo Cliente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    Seleccionar Vendedor:
+                    <select class="form-select" aria-label="Default select example">
+                        <option selected></option>
+                        <option value="1"></option>
+                        <option value="2"></option>
+                        <option value="3"></option>
+                    </select>
+                </p>
+
+                <p>
+                    Seleccionar Cliente:
+                    <select class="form-select" aria-label="Default select example">
+                        <option selected></option>
+                        <option value="1"></option>
+                        <option value="2"></option>
+                        <option value="3"></option>
+                    </select>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--MODALDetalle-->
+<div class="modal fade" id="DetalleModal" tabindex="-1" aria-labelledby="DetalleModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Detalle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    Seleccionar Evento:
+                    <select class="form-select" aria-label="Default select example">
+                        <option selected></option>
+                        <option value="1"></option>
+                        <option value="2"></option>
+                        <option value="3"></option>
+                    </select>
+                </p>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>

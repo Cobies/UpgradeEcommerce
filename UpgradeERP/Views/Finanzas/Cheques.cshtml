@@ -1,0 +1,117 @@
+﻿@{
+    ViewData["Title"] = "Cheques";
+    ViewData["Script"] = "ChequesScripts";
+}
+<div class="text-end me-0 mb-2">
+    <div class="container-fluid row ">
+        <div class="row">
+            <input class="form-control me-0 col-2" style="max-width: 25%;" name="txtbusqueda" id="txtbusqueda" type="text" value="" placeholder="Buscar">
+
+
+            <button type="button" class="btn btn-primary ms-5 end-0 position-relative" style="max-width: 25%;" data-bs-toggle="modal" data-bs-target="#ProductoModal">
+                Agregar Producto
+            </button>
+        </div>
+    </div>
+</div>
+<div class="table-responsive-sm">
+
+    <table class="table  table-sm table-hover ">
+        <caption class="end-0 mt-2 ">
+            Elementos:
+            <button onclick="movimientoanterior()" class="btn btn-outline-secondary btn-sm rounded-circle">
+                <i class="bi bi-arrow-left"></i>
+            </button>
+            <span id="cantelemento" name="cantelemento">1 - 20</span>
+            <input type="hidden" name="numelement" id="numelement" value="0" />
+            <button onclick="movimientosiguiente()" class="btn btn-outline-secondary btn-sm rounded-circle">
+                <i class="bi bi-arrow-right"></i>
+            </button><span name="carga" id="carga">
+            </span>
+        </caption>
+        <thead>
+            <tr>
+                <th scope="col">Cliente</th>
+                <th scope="col">Banco</th>
+                <th scope="col">Numero</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Total</th>
+                <th scope="col">Cobrado</th>
+                <th scope="col">F. Cobro</th>
+                <th scope="col">Nro. Op.</th>
+                <th scope="col">Tipo</th>
+                <th scope="col">N° Doc</th>
+                <th scope="col">Aprobado</th>
+                <th scope="col">Aprobado Por</th>
+
+
+            </tr>
+        </thead>
+        <tbody id="tabla">
+        </tbody>
+    </table>
+
+</div>
+
+
+@section ChequesScripts{
+     <script>
+        $(document).ready(function () {
+            rellenartabla();
+            rellenarSelectCliente();
+        });
+    </script>
+
+
+    <script>
+        function rellenartabla() {
+            var numelement = document.getElementById("numelement").value;
+            var busq = document.getElementById("txtbusqueda").value;
+            var datos = new FormData();
+            datos.append("numelement", numelement);
+            datos.append("busqueda", busq);
+            $.get({
+                type: 'POST',
+                url: "/Finanzas/BusquedaChequesLimite",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false,
+                beforeSend: function () {
+                    $("#carga").append(`<div class="d-flex align-items-center">
+                                                        <strong>Loading...</strong>
+                                                        <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div>
+                                                        </div>`
+                    );
+                },
+                success: function (msg) {
+                    $("#carga").html("");
+                    var dato = jQuery.parseJSON(msg);
+                    $("#tabla").html(" ");
+                    for (var i = 0; i < dato.length; i++) {
+                        $("#tabla").append(
+                            "<tr id='r'>" +
+                            "<td >" + dato[i].DepositoCliente.FechaCreado + "</td>" +
+                            "<td >" + dato[i].Aprobado + "</td>" +
+                            "<td >" + dato[i].NotaPedido.Numero + "</td>" +
+                            "<td >" + dato[i].DepositoCliente.Cliente.Persona.Nombre + "</td>" +
+                            "<td >" + dato[i].CuentaBancaria.Banco.Nombre + "</td>" +
+                            "<td >" + dato[i].DepositoCliente.Operacion + "</td>" +
+                            "<td >" + dato[i].DepositoCliente.Monto + "</td>" +
+                            "<td >" + dato[i].DepositosCliente.Monto + "</td>" +
+                            "<td >" + dato[i].DepositosCliente.FechaAprobacion + "</td>" +
+                            "<td >" + dato[i].DepositosCliente.AprobadoPorEmpleado.Persona.Nombre + "</td>" +
+                            `<td class='d-inline-flex'> <button type='button' class='btn btn-primary btn-sm ' data-bs-toggle='modal' onclick="TrasnferenciasId('${dato[i]._id}')" data-bs-target='#ProductoModal'><i class='bi bi-search'></i> </button>` +
+                            `<td class='d-inline-flex'> <button type='button' class='btn btn-primary btn-sm ' data-bs-toggle='modal' onclick="EditarTrasnferenciaId('${dato[i]._id}')" data-bs-target='#ProductoModal'><i class='bi bi-pencil-square'></i> </button>` +
+
+                            "</tr>"
+                        );
+                    }
+
+                }
+            });
+        }
+    </script>
+
+
+}

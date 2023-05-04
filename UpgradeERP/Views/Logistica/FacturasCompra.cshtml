@@ -1,0 +1,779 @@
+﻿@{
+    ViewData["Title"] = "Facturas de Compra";
+    ViewData["Scripts"] = "FacturasScript";
+}
+<div class="text-end me-0 mb-2">
+    <div class="container-fluid row ">
+        <div class="row">
+            <input class="form-control me-0 col-2" style="max-width: 25%;" name="txtbusqueda" id="txtbusqueda" type="text" value="" placeholder="Buscar">
+            
+
+            <button type="button" class="btn btn-primary ms-5 end-0 position-relative" style="max-width: 25%;" data-bs-toggle="modal" data-bs-target="#FacturasModal">
+                Agregar Factura
+            </button>
+        </div>
+    </div>
+</div>
+<div class="table-responsive-sm">
+    <table class="table  table-sm table-hover ">
+        <caption class="end-0 mt-2 ">
+            Elementos:
+            <button onclick="movimientoanterior()" class="btn btn-outline-secondary btn-sm rounded-circle">
+                    <i class="bi bi-arrow-left"></i>
+                </button>
+             <span id="cantelemento" name="cantelemento">1 - 20</span>
+            <input type="hidden" name="numelement" id="numelement" value="0" />
+            <button onclick="movimientosiguiente()" class="btn btn-outline-secondary btn-sm rounded-circle">
+                    <i class="bi bi-arrow-right"></i>
+            </button><span name="carga" id="carga">
+            </span>
+        </caption>
+        <thead>
+            <tr>
+                <th scope="col">Documento</th>
+                <th scope="col">Proveedor</th>
+                <th scope="col">Lugar Entrega</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Impuesto</th>
+                <th scope="col">SubTotal</th>
+                <th scope="col">Total</th>
+                <th scope="col">Pagos</th>
+                <th scope="col">Saldo</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="tabla">
+        </tbody>
+    </table>
+</div>
+
+
+<!--Modals    -->
+<!-- Button trigger modal -->
+<!-- Modal -->
+<div class="modal fade" id="FacturasModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Nueva Factura Compra</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="post" id="ingresofacturascompra" name="ingresofacturascompra">
+                    <input type="hidden" id="_id" name="_id" value="" />
+                    <div class="row">
+                        <div class="mb-3 col-6">
+                            <label for="tipoDocumento" class="form-label">Documento</label>
+                            <div class="input-group mb-3 ">
+                                <a class="seleccionable form-select modselect" data-bs-toggle="dropdown" aria-expanded="false"><span id="textdocumentotipo" name="textdocumentotipo">Seleccione un producto</span></a>
+                                <ul class="dropdown-menu w-100">
+                                    <input class=" form-control" id="documentotipobusqueda" name="documentotipobusqueda" />
+                                    <span id="documentotiposelect" name="documentotiposelect">
+                                    </span>
+                                </ul>
+                            </div>
+                            <input type="hidden" name="documentotipo" id="documentotipo" />
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Numero</label>
+                            <input type="text" class="form-control cero modinput" id="numero" name="numero" aria-describedby="emailHelp" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="mb-3 col-12">
+                            <label for="tipoDocumento" class="form-label">Cliente</label>
+                            <div class="input-group mb-3 ">
+                                <a class="seleccionable form-select w-100 modselect" data-bs-toggle="dropdown" aria-expanded="false"><span id="textcliente" name="textcliente">Seleccione un cliente</span></a>
+                                <ul class="dropdown-menu w-100">
+                                    <input class=" form-control" id="clientebusqueda" name="clientebusqueda" />
+                                    <span id="clienteselect" name="clienteselect">
+                                    </span>
+                                </ul>
+                            </div>
+                            <input type="hidden" name="cliente" id="cliente" />
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Ubicacion</label>
+                            <input type="text" class="form-control cero" id="ubicacion" name="ubicacion" aria-describedby="emailHelp" readonly />
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Direccion</label>
+                            <input type="text" class="form-control cero" id="direccion" name="direccion" aria-describedby="emailHelp" readonly />
+                        </div>
+                    </div>
+                    <div class="row">
+                        
+                        <div class="mb-3 col-6">
+                            <label for="tipoDocumento" class="form-label">Almacen</label>
+                            <div class="input-group mb-3 ">
+                                <a class="seleccionable form-select modselect" data-bs-toggle="dropdown" aria-expanded="false"><span id="textalmacen" name="textalmacen">Seleccione un almacen</span></a>
+                                <ul class="dropdown-menu w-100">
+                                    <input class=" form-control" id="almacenbusqueda" name="almacenbusqueda" />
+                                    <span id="almacenselect" name="almacenselect">
+                                    </span>
+                                </ul>
+                            </div>
+                            <input type="hidden" name="almacen" id="almacen" />
+                        </div>
+                        
+                            <div class="mb-3 col-6">
+                                <label for="descripcionRol" class="form-label">Fecha</label>
+                            <input type="datetime" class="form-control cero modinput" id="fecha" name="fecha" value="@DateTime.Now.ToString("dd/MM/yyyy")" aria-describedby="emailHelp" readonly />
+                            </div>
+                            
+                        <div class="row">
+                            <div class="mb-3 col-6">
+                                <label for="descripcionRol" class="form-label">Fecha de Entrega</label>
+                                <input type="date" class="form-control cero modinput" id="fechaentrega" name="fechaentrega" value="@DateTime.Now.ToString("dd/MM/yyyy")" aria-describedby="emailHelp" />
+                            </div>
+                        
+                        <div class="mb-3 col-6">
+                            <label for="tipoDocumento" class="form-label">Forma de Pago</label>
+                            <div class="input-group mb-3 ">
+                                    <a class="seleccionable form-select modselect" data-bs-toggle="dropdown" aria-expanded="false"><span id="textformadepago" name="textformadepago">Seleccione un almacen</span></a>
+                                <ul class="dropdown-menu w-100">
+                                    <input class=" form-control" id="formadepagobusqueda" name="formadepagobusqueda" />
+                                    <span id="formadepagoselect" name="formadepagoselect">
+                                    </span>
+                                </ul>
+                            </div>
+                            <input type="hidden" name="formadepago" id="formadepago" />
+                        </div>
+                        </div>
+                        <div class="row">
+
+                            <div class="mb-3 col-6">
+                                <label for="tipoDocumento" class="form-label">Moneda</label>
+                                <div class="input-group mb-3 ">
+                                    <a class="seleccionable form-select modselect" data-bs-toggle="dropdown" aria-expanded="false"><span id="textmoneda" name="textmoneda">Seleccione un almacen</span></a>
+                                    <ul class="dropdown-menu w-100">
+                                        <input class=" form-control" id="monedabusqueda" name="monedabusqueda" />
+                                        <span id="monedaselect" name="monedaselect">
+                                        </span>
+                                    </ul>
+                                </div>
+                                <input type="hidden" name="moneda" id="moneda" />
+                            </div>
+                            <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Descuento</label>
+                            <input type="text" class="form-control cero" id="descuento" name="descuento" aria-describedby="emailHelp" />
+                        </div>
+                        </div>
+                        <div class="row mt-5">
+
+
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Item</th>
+                                            <th scope="col">Nombre</th>
+                                            <th scope="col">Cantidad</th>
+                                            <th scope="col">Precio</th>
+                                            <th scope="col">Importe</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tabfact">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer mt-4">
+                        <button type="button" class="btn btn-success ms-5 position-absolute start-0 mx-4" style="max-width: 25%;" data-bs-toggle="modal" data-bs-target="#FacturaDetalleModal">
+                            Agregar Producto
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Enviar</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="modal fade" id="FacturaDetalleModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Nuevo Producto para Venta</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="post" id="ingresofacturascompradetalle" name="ingresofacturascompradetalle">
+
+                    <div class="row">
+                        <div class="mb-3 col-12">
+                            <label for="tipoDocumento" class="form-label">Producto</label>
+                            <div class="input-group mb-3 ">
+                                <a class="seleccionable form-select w-100" data-bs-toggle="dropdown" aria-expanded="false"><span id="textproducto" name="textproducto">Seleccione un producto</span></a>
+
+                                <ul class="dropdown-menu w-100">
+                                    <input class=" form-control" id="productobusqueda" name="productobusqueda" />
+                                    <span id="productoselect" name="productoselect">
+                                    </span>
+                                </ul>
+                            </div>
+                            <input type="hidden" name="producto" id="producto" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Cantidad</label>
+                            <input type="number" class="form-control cero" id="cantidad" name="cantidad" aria-describedby="emailHelp" />
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Precio Unitario</label>
+                            <input type="number" class="form-control cero" step="0.01" id="preciounitario" name="preciounitario" aria-describedby="emailHelp" />
+                        </div>
+                    </div>
+                    <div class="modal-footer mt-4">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Enviar</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@section FacturasScript{
+    <script>
+        var arreglo = [];
+
+        $(document).ready(function () {
+            rellenartabla();
+            rellenarSelectProducto();
+            rellenarSelectAlmacen();
+            rellenarSelectMoneda();
+            rellenarSelectCliente();
+            rellenarSelectFormaDePago()
+        });
+    </script>
+
+
+    <script>
+        $("form[name=ingresofacturascompra]").on('submit', function (e) {
+            e.preventDefault();
+            var datos = new FormData(this);
+            datos.append("listadodetallefactura", JSON.stringify(arreglo));
+            $.ajax({
+                type: "POST",
+                url: "/Logistica/IngresoFacturasCompra",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    if (msg == "404") {
+                        alert("fracaso");
+                    } else {
+                        window.location.reload();
+                    }
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $("input[name='txtbusqueda']").on('keyup', function () {
+            rellenartabla();
+        });
+    </script>
+
+
+
+    <script>
+        function rellenartabla() {
+            var numelement = document.getElementById("numelement").value;
+            var busq = document.getElementById("txtbusqueda").value;
+            var datos = new FormData();
+            datos.append("numelement", numelement);
+            datos.append("busqueda", busq);
+            $.get({
+                type: "post",
+                url: "/Logistica/BusquedaFacturasCompraLimite",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false,
+                beforeSend: function () {
+                    $("#carga").append(`<div class="d-flex align-items-center">
+                                        <strong>Loading...</strong>
+                                        <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div>
+                                        </div>`
+                    );
+                },
+                success: function (msg) {
+                    $("#carga").html("");
+                    var dato = jQuery.parseJSON(msg);
+                    $("#tabla").html("");
+                    for (var i = 0; i < dato.length; i++) {
+
+                        var num = parseFloat(dato[i].Impuesto.Valor) * 100;
+
+
+                        $("#tabla").append(
+                            "<tr id='r'>" +
+                            "<td id='r' scope='col'>" + dato[i].Numero +"</td>" +
+                            "<td id='r' scope='col'>" + dato[i].Proveedor.Persona.Nombre + "</td>" +
+                            "<td id='r' scope='col'>" + dato[i].Almacen.Abreviatura + "</td>" +
+                            "<td id='r' scope='col'>" + dato[i].Fecha + "</td>" +
+                            "<td id='r' scope='col'>" + num + "%" + "</td>" +
+                            "<td id='r' scope='col'>" + dato[i].SubTotal + "</td>" +
+                            "<td id='r' scope='col'>" + dato[i].TotalFactura + "</td>" +
+                            "<td id='r' scope='col'>" + dato[i].Pagos + "</td>" +
+                            "<td id='r' scope='col'>" + dato[i].Saldo + "</td>" +
+                            `<td class='d-inline-flex'> <button type='button' class='btn btn-primary btn-sm ' data-bs-toggle='modal' data-bs-target='#FacturasModal' onclick="VerFactura('${dato[i]._id}')"><i class='bi bi-search'></i> </button>` +
+                            `<button type='button' class='btn btn-primary btn-sm ms-2' data-bs-toggle='modal' data-bs-target='#FacturasModal' onclick="EditFactura('${dato[i]._id}')"> <i class='bi bi-pencil-square'></i></button>` +
+                                "<button type='button' class='btn btn-danger btn-sm ms-2' data-bs-toggle='modal' data-bs-target='#ProductoModal'> <i class='bi bi-trash'   ></i></button></td>" +
+                                "</tr>"
+                        );
+                    }
+
+                }
+            });
+        }
+    </script>
+
+    <script>
+        $("input[name='almacenbusqueda']").on('keyup', function () {
+            var busq = $(this).val();
+            if (busq.length > 0) {
+                $("#almacenselect").html(" ");
+                var datos = new FormData();
+                datos.append("busqueda", busq);
+                $.ajax({
+                    type: "post",
+                    url: "/Almacen/BusquedaAlmacen",
+                    data: datos,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function (msg) {
+                        var dato = jQuery.parseJSON(msg);
+
+                        $("#almacenselect").html("");
+                        for (var i = 0; i < dato.length; i++) {
+                            $("#almacenselect").append(
+                                `<li><a class="dropdown-item seleccionable" onclick="seleccionablealmacen('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre}</a></li>`);
+                        }
+
+                    }
+                });
+            } else {
+                rellenarSelectAlmacen();
+            }
+        });
+    </script>
+
+
+    <script>
+        function rellenarSelectAlmacen() {
+            $.get({
+                type: "post",
+                url: "/Almacen/TablaAlmacen",
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    var dato = jQuery.parseJSON(msg);
+
+                    $("#almacenselect").html("");
+                    for (var i = 0; i < dato.length; i++) {
+                        $("#almacenselect").append(
+                            `<li><a class="dropdown-item seleccionable" onclick="seleccionablealmacen('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre}</a></li>`);
+                    }
+
+                }
+            });
+        }
+    </script>
+
+    <script>
+        function seleccionablealmacen(id, nombre) {
+            $("#textalmacen").html("");
+
+            $("#textalmacen").append(nombre);
+            $("input[name='almacen']").val(id);
+        }
+    </script>
+
+
+
+    <script>
+        $("input[name='productobusqueda']").on('keyup', function () {
+            var busq = $(this).val();
+            if (busq.length > 0) {
+                $("#productoselect").html(" ");
+                var datos = new FormData();
+                datos.append("busqueda", busq);
+                $.ajax({
+                    type: "post",
+                    url: "/Almacen/BusquedaProducto",
+                    data: datos,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function (msg) {
+                        var dato = jQuery.parseJSON(msg);
+
+                        $("#productoselect").html("");
+                        for (var i = 0; i < dato.length; i++) {
+                            $("#productoselect").append(
+                                `<li><a class="dropdown-item seleccionable" onclick="seleccionableproducto('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre}</a></li>`);
+                        }
+
+                    }
+                });
+            } else {
+                rellenarSelectProducto();
+            }
+        });
+    </script>
+
+
+    <script>
+        function rellenarSelectProducto() {
+            $.get({
+                type: "post",
+                url: "/Almacen/TablaProductos",
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    var dato = jQuery.parseJSON(msg);
+
+                    $("#productoselect").html("");
+                    for (var i = 0; i < dato.length; i++) {
+                        $("#productoselect").append(
+                            `<li><a class="dropdown-item seleccionable" onclick="seleccionableproducto('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre}</a></li>`);
+                    }
+
+                }
+            });
+        }
+    </script>
+
+    <script>
+        function seleccionableproducto(id, nombre) {
+            $("#textproducto").html("");
+
+            $("#textproducto").append(nombre);
+            $("input[name='producto']").val(id);
+        }
+    </script>
+
+
+ <script>
+        $("form[name=ingresofacturascompradetalle]").on('submit', function (e) {
+            e.preventDefault();
+            var datos = new FormData(this);
+            $.ajax({
+                type: "POST",
+                url: "/Logistica/OrganizarTablaFacturasCompraDetalle",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false, 
+                success: function (msg) {
+                    if (msg == "404") {
+                        alert("fracaso");
+                    } else {
+                        var dato = jQuery.parseJSON(msg);
+                        var precio = parseFloat(dato.Cantidad) * parseFloat(dato.PrecioUnitario);
+
+                                                                            arreglo.push(dato);
+                                                                            console.log(arreglo);
+                            $("#tabfact").append(
+                                
+                                "<tr id='r'>" +
+                                "<td id='r' scope='col'>" + dato.Producto.Codigo + "</td>" +
+                                "<td id='r' scope='col'>" + dato.Producto.Nombre + "</td>" +
+                                "<td id='r' scope='col'>" + dato.CantidadEntregado + "</td>" +
+                                "<td id='r' scope='col'>" + dato.Cantidad + "</td>" +
+                                "<td id='r' scope='col'>" + dato.PrecioUnitario + "</td>" +
+                                "<td id='r' scope='col'>" + precio + "</td>" +
+                                "</tr>"
+
+                            );
+                        
+
+                    }
+                }
+            });
+        });
+    </script>
+
+
+
+    <script>
+        $("input[name='formadepagobusqueda']").on('keyup', function () {
+            var busq = $(this).val();
+            if (busq.length > 0) {
+                $("#formadepagoselect").html(" ");
+                var datos = new FormData();
+                datos.append("busqueda", busq);
+                $.ajax({
+                    type: "post",
+                    url: "/Finanzas/BusquedaFormaDePago",
+                    data: datos,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function (msg) {
+                        var dato = jQuery.parseJSON(msg);
+
+                        $("#formadepagoselect").html("");
+                        for (var i = 0; i < dato.length; i++) {
+                            $("#formadepagoselect").append(
+                                `<li><a class="dropdown-item seleccionable" onclick="seleccionableformadepago('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre}</a></li>`);
+                        }
+
+                    }
+                });
+            } else {
+                rellenarSelectFormaDePago();
+            }
+        });
+    </script>
+
+
+    <script>
+        function rellenarSelectFormaDePago() {
+            $.get({
+                type: "post",
+                url: "/Finanzas/TablaFormaDePago",
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    var dato = jQuery.parseJSON(msg);
+
+                    $("#formadepagoselect").html("");
+                    for (var i = 0; i < dato.length; i++) {
+                        $("#formadepagoselect").append(
+                            `<li><a class="dropdown-item seleccionable" onclick="seleccionableformadepago('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre}</a></li>`);
+                    }
+
+                }
+            });
+        }
+    </script>
+
+    <script>
+        function seleccionableformadepago(id, nombre) {
+            $("#textformadepago").html("");
+
+            $("#textformadepago").append(nombre);
+            $("input[name='formadepago']").val(id);
+        }
+    </script>
+
+
+
+    <script>
+        $("input[name='monedabusqueda']").on('keyup', function () {
+            var busq = $(this).val();
+            if (busq.length > 0) {
+                $("#distritoselect").html(" ");
+                var datos = new FormData();
+                datos.append("busqueda", busq);
+                $.ajax({
+                    type: "post",
+                    url: "/Almacen/BusquedaMoneda",
+                    data: datos,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function (msg) {
+                        var dato = jQuery.parseJSON(msg);
+
+                        $("#monedaselect").html("");
+                        for (var i = 0; i < dato.length; i++) {
+                            $("#monedaselect").append(
+                                `<li><a class="dropdown-item seleccionable" onclick="seleccionablemoneda('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre}</a></li>`);
+                        }
+
+                    }
+                });
+            } else {
+                rellenarSelectMoneda();
+            }
+        });
+    </script>
+
+
+    <script>
+        function rellenarSelectMoneda() {
+            $.get({
+                type: "post",
+                url: "/Almacen/TablaMoneda",
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    var dato = jQuery.parseJSON(msg);
+
+                    $("#monedaselect").html("");
+                    for (var i = 0; i < dato.length; i++) {
+                        $("#monedaselect").append(
+                            `<li><a class="dropdown-item seleccionable" onclick="seleccionablemoneda('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre}</a></li>`);
+                    }
+
+                }
+            });
+        }
+    </script>
+
+    <script>
+        function seleccionablemoneda(id, nombre) {
+            $("#textmoneda").html("");
+
+            $("#textmoneda").append(nombre);
+            $("input[name='moneda']").val(id);
+        }
+    </script>
+
+    <script>
+        $("input[name='clientebusqueda']").on('keyup', function () {
+            var busq = $(this).val();
+            if (busq.length > 0) {
+                $("#clienteselect").html(" ");
+                var datos = new FormData();
+                datos.append("busqueda", busq);
+                $.ajax({
+                    type: "post",
+                    url: "/Clientes/BusquedaCliente",
+                    data: datos,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function (msg) {
+                        var dato = jQuery.parseJSON(msg);
+
+                        $("#clienteselect").html("");
+                        for (var i = 0; i < dato.length; i++) {
+                            $("#clienteselect").append(
+                                `<li><a class="dropdown-item seleccionable" onclick="seleccionablecliente('${dato[i]._id}', '${dato[i].Persona.Nombre}', '${dato[i].Persona.Distrito.Nombre}/${dato[i].Persona.Distrito.Provincia.Nombre}/${dato[i].Persona.Distrito.Provincia.Departamento.Nombre}', '${dato[i].Persona.Direccion}')" >${dato[i].Persona.Nombre}</a></li>`);
+                        }
+
+                    }
+                });
+            } else {
+                rellenarSelectCliente();
+            }
+        });
+    </script>
+
+
+    <script>
+        function rellenarSelectCliente() {
+            $.get({
+                type: "post",
+                url: "/Clientes/TablaClientes",
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    var dato = jQuery.parseJSON(msg);
+
+                    $("#clienteselect").html("");
+                    for (var i = 0; i < dato.length; i++) {
+                        $("#clienteselect").append(
+                            `<li><a class="dropdown-item seleccionable" onclick="seleccionablecliente('${dato[i]._id}', '${dato[i].Persona.Nombre}', '${dato[i].Persona.Distrito.Nombre}/${dato[i].Persona.Distrito.Provincia.Nombre}/${dato[i].Persona.Distrito.Provincia.Departamento.Nombre}', '${dato[i].Persona.Direccion}')" >${dato[i].Persona.Nombre}</a></li>`);
+                    }
+
+                }
+            });
+        }
+    </script>
+
+    <script>
+        function seleccionablecliente(id, nombre, distrito, direccion) {
+            $("#textcliente").html("");
+            $("input[name='ubicacion']").val(distrito);
+            $("input[name='direccion']").val(direccion);
+            $("#textcliente").append(nombre);
+            $("input[name='cliente']").val(id);
+        }
+    </script>
+
+
+        <script>
+        function movimientosiguiente() {
+
+            var numelement = document.getElementById("numelement").value;
+            var num = parseInt(numelement);
+
+                num += 20;
+            var numinicial = num + 1;
+            var numfinal = num + 20;
+
+            $("#cantelemento").html(" ");
+            $("#cantelemento").append(numinicial + " - " + numfinal);
+            $("input[name='numelement']").val(num);
+            rellenartabla();
+        }
+
+
+        function movimientoanterior() {
+
+            var numelement = document.getElementById("numelement").value;
+            var num = parseInt(numelement);
+
+                if (num != 0) {
+                    num -= 20;
+                    var numinicial = num + 1;
+                    var numfinal = num + 20;
+
+                    $("#cantelemento").html(" ");
+                    $("#cantelemento").append(numinicial + " - "+numfinal);
+                    $("input[name='numelement']").val(num);
+                    rellenartabla();
+
+                }
+        }
+
+    </script>
+
+    <script>
+        function VerFactura(id){
+            var datos = new FormData();
+            datos.append("id", id);
+            $.ajax({
+                type: "POST",
+                url: "/Almacen/BuscarProductoId",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+
+
+                    var dato = jQuery.parseJSON(msg);
+
+                   
+                    VisualizarModal();
+                }
+            });
+        }
+    </script>
+
+
+
+}

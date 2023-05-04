@@ -1,0 +1,872 @@
+﻿@{
+    ViewData["Title"] = "Servicio Tecnico";
+    ViewData["Scripts"] = "ReporteTecnicoScript";
+}
+
+<style>
+    .seleccionable:hover, .seleccionable:link {
+        text-decoration: none !important;
+    }
+
+    .seleccionable:hover {
+        color: #000000 !important;
+    }
+
+</style>
+
+<div class="text-end me-0 mb-2 ">
+    <div class="container-fluid row">
+        <div class="row">
+            <input  class="form-control me-0 col-2" style="max-width: 30%;" name="txtbusqueda" id="txtbusqueda" type="text" placeholder="&#128270; Buscar">
+
+            <button type="button" class="btn btn-primary ms-5 position-absolute end-0 me-" style="max-width: 25%;" data-bs-toggle="modal" data-bs-target="#NuevoReporteTecnico">
+                Nueva Reporte Tecnico
+            </button>
+        </div>
+    </div>
+</div>
+
+<div>
+    <table class="table table-striped border">
+        <thead> 
+            <tr>
+                <th scope="col">Numero</th>
+                <th scope="col">Fecha de Recepcion</th>
+                <th scope="col">Encargado</th>
+                <th scope="col">Cliente</th>
+                <th scope="col">Articulo</th>
+                <th scope="col">Fecha de Entrega</th>
+                <th scope="col">Fallas Indicadas</th>
+                <th scope="col">Resultado</th>
+                <th scope="col">Objetos Dejados </th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+
+        <tbody id="tabla">
+
+            <!--Relleno mediante Javascript-->
+        </tbody>
+
+    </table>
+    <div id="loading" class="spinner-border m-5" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+        <!--React Content-->
+    @*<div id="content"></div>*@
+
+    <button id="btnExportarExcel" class="btn btn-success ms-5 position-relative end-0 me-" style="max-width: 25%;" >
+                Exportar datos a Excel
+    </button>
+    <button id="btnExportarPDF" class="btn btn-danger ms-5 position-relative end-0 me-  text-white" style="max-width: 25%;">
+                Exportar datos a PDF
+    </button>
+</div>
+
+<!--Modals    -->
+<!-- Button trigger modal -->
+<!-- Modal -->
+<div class="modal fade" id="NuevoReporteTecnico" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Crear Reporte Tecnico</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="post" id="ingresoReporteTecnico" name="ingresoReporteTecnico">
+                    <div class="row">
+                        <!--Cliente-->
+                        <div class="mb-3 col-12">
+                            <label for="cliente" class="form-label">Cliente</label>
+                            <div class="input-group mb-3 ">
+                                <a class="seleccionable form-select w-100" data-bs-toggle="dropdown" aria-expanded="false"><span id="txtcliente" name="txtcliente">Seleccione una cliente</span></a>
+                                <!--Modal ADD-->
+                                <button type="button" class="btn btn-primary ms-5 position-absolute end-0" style="max-width: 25%;" data-bs-toggle="modal" data-bs-target="#ClienteModal">
+                                    <i class="bi bi-plus-circle"></i>
+                                </button>
+                                <ul class="dropdown-menu w-100">
+                                    <input class="form-control" id="clientebusqueda" name="clientebusqueda" />
+                                    <span id="clienteselect" name="clienteselect">
+                                    </span>
+                                </ul>
+                            </div>
+                        </div>
+                        <input type="hidden" name="cliente" id="cliente" />
+
+                        <!--Almacen-->
+                        <div class="mb-3 col-3">
+                            <label for="almacen" class="form-label">Almacen</label>
+                            <input class="form-control" aria-describedby="almacenHelp" value="Arequipa" readonly id="almacen" name="almacen" disabled />
+                        </div>
+
+                        <!--Serie-->
+                        <div class="mb-3 col-3">
+                            <label for="serie" class="form-label">Serie</label>
+                            <input class="form-control" aria-describedby="serieHelp" value="1" readonly id="serie" name="serie" disabled />
+                        </div>
+
+
+                        <!--Encargado-->
+                        <div class="mb-3 col-6">
+                            <label for="encargadobusqueda" class="form-label">Encargado</label>
+                            <div class="input-group mb-3 ">
+                                <a class="seleccionable form-select w-100" data-bs-toggle="dropdown" aria-expanded="false"><span id="txtencargado" name="txtencargado">Seleccione una encargado</span></a>
+                                <ul class="dropdown-menu w-100">
+                                    <input class="form-control" id="encargadobusqueda" name="encargadobusqueda" />
+                                    <span id="encargadoselect" name="encargadoselect">
+                                    </span>
+                                </ul>
+                            </div>
+                        </div>
+                        <input type="hidden" name="encargado" id="encargado" />
+
+                        <!--Tipo de Mantemiento-->
+                        <div class="mb-3 col-6">
+                            <label for="Tipodemantenimiento" class="form-label">Tipo de mantenimiento</label>
+                            <select class="form-select" aria-label="Tipo de Mantenimiento" name="tipodemantenimiento" id="tipodemantenimiento">
+                                <option selected><u>Seleccione una Tipo</u></option>
+                                <option value="Correctivo">Correctivo</option>
+                                <option value="Preventivo">Preventivo</option>
+                            </select>
+                        </div>
+
+
+                        <!--DatosdelEquipo-->
+                        <div class="mb-3 col-6">
+                            <label for="datosdelequiposelect" class="form-label">Datos del Equipo</label>
+                            <div class="input-group mb-3 ">
+                                <a class="seleccionable form-select w-100" data-bs-toggle="dropdown" aria-expanded="false"><span id="txtdatosdelequipo" name="txtdatosdelequipo">Seleccione una persona</span></a>
+                                <ul class="dropdown-menu w-100">
+                                    <input class=" form-control" id="datosdelequipobusqueda" name="datosdelequipobusqueda" />
+                                    <span id="datosdelequiposelect" name="datosdelequiposelect">
+                                    </span>
+                                </ul>
+                            </div>
+                        </div>
+                        <input type="hidden" name="datosdelequipo" id="datosdelequipo" />
+
+                        <!--Fecha-->
+                        <div class="mb-3 col-6">
+                            <label for="FechaRecepcion" class="form-label">Fecha Recepcion</label>
+                            <input for="FechaRecepcion" class="form-control" id="Date" type="datetime" name="Date" readonly value="@DateTime.Now" />
+                        </div>
+
+
+                        <!--Mantenimientos Realizados-->
+                        <div class="mb-3 col-6">
+                            <label for="mantenimientosRealizados" class="form-label">Mantenimientos Realizados</label>
+                            <textarea for="MantenimientosRealizados" class="form-control" name="mantenimientosRealizados" id="mantenimientosRealizados" placeholder="Mantenimientos Realizados" rows="1"></textarea>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <!--Observaciones-->
+                        <div class="mb-3 col-6">
+                            <label for="observaciones" class="form-label">Observaciones</label>
+                            <textarea class="form-control" name="observaciones" id="observaciones" placeholder="Observaciones" rows="2"></textarea>
+                        </div>
+
+                        <!--Objetos Dejados-->
+                        <div class="mb-3 col-6">
+                            <label for="objetosDejados" class="form-label">Objetos Dejados</label>
+                            <textarea class="form-control" name="objetosDejados" id="objetosDejados" placeholder="Objetos Dejados" rows="2"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Crear</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ID-->
+<!-- EDITAR  -->
+<!-- Modal -->
+<div class="modal fade" id="EditarReporteTecnico" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Editar Reporte Tecnico</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="post" id="editarReporteTecnico" name="editarReporteTecnico">
+                    <div class="row">
+                        <!--Input Oculto de Id-->
+                        <input type="hidden" id="id" name="id" />
+                        <!--Cliente-->
+                        <div class="mb-3 col-12">
+                            <label for="cliente" class="form-label">Cliente</label>
+                            <div class="input-group mb-3 ">
+                                <a class="seleccionable form-select w-100" data-bs-toggle="dropdown" aria-expanded="false"><span id="txtclienteEditar" name="txtcliente">Seleccione una cliente</span></a>
+                                <!--Modal ADD-->
+                                <button type="button" class="btn btn-primary ms-5 position-absolute end-0" style="max-width: 25%;" data-bs-toggle="modal" data-bs-target="#ClienteModal">
+                                    <i class="bi bi-plus-circle"></i>
+                                </button>
+                                <ul class="dropdown-menu w-100">
+                                    <input class="form-control" id="clientebusquedaEditar" name="clientebusqueda" />
+                                    <span id="clienteselectEditar" name="clienteselect">
+                                    </span>
+                                </ul>
+                            </div>
+                        </div>
+                        <input type="hidden" name="cliente" id="clienteEditar" />
+
+                        <!--Almacen-->
+                        <div class="mb-3 col-3">
+                            <label for="almacen" class="form-label">Almacen</label>
+                            <input class="form-control" aria-describedby="almacenHelp" value="Arequipa" readonly id="almacenEditar" name="almacen" disabled />
+                        </div>
+
+                        <!--Serie-->
+                        <div class="mb-3 col-3">
+                            <label for="serie" class="form-label">Serie</label>
+                            <input class="form-control" aria-describedby="serieHelp" value="1" readonly id="serieEditar" name="serie" disabled />
+                        </div>
+
+
+                        <!--Encargado-->
+                        <div class="mb-3 col-6">
+                            <label for="encargadobusqueda" class="form-label">Encargado</label>
+                            <div class="input-group mb-3 ">
+                                <a class="seleccionable form-select w-100" data-bs-toggle="dropdown" aria-expanded="false"><span id="txtencargadoEditar" name="txtencargado">Seleccione una encargado</span></a>
+                                <ul class="dropdown-menu w-100">
+                                    <input class="form-control" id="encargadobusquedaEditar" name="encargadobusqueda" />
+                                    <span id="encargadoselectEditar" name="encargadoselect">
+                                    </span>
+                                </ul>
+                            </div>
+                        </div>
+                        <input type="hidden" name="encargado" id="encargadoEditar" />
+
+                        <!--Fecha -->
+                        <input type="hidden" name="fechaRecepcion" id="fechaRecepcionEditar"/>
+
+                        <!--Tipo de Mantemiento-->
+                        <div class="mb-3 col-6">
+                            <label for="tipodemantenimiento" class="form-label">Tipo de mantenimiento</label>
+                            <select class="form-select" aria-label="Tipo de Mantenimiento" name="tipodemantenimiento" id="tipodemantenimientoEditar">
+                                <option selected><u>Seleccione una Tipo</u></option>
+                                <option value="Correctivo">Correctivo</option>
+                                <option value="Preventivo">Preventivo</option>
+                            </select>
+                        </div>
+
+
+                        <!--DatosdelEquipo-->
+                        <div class="mb-3 col-6">
+                            <label for="datosdelequiposelect" class="form-label">Datos del Equipo</label>
+                            <div class="input-group mb-3 ">
+                                <a class="seleccionable form-select w-100" data-bs-toggle="dropdown" aria-expanded="false"><span id="txtdatosdelequipoEditar" name="txtdatosdelequipo">Seleccione una persona</span></a>
+                                <ul class="dropdown-menu w-100">
+                                    <input class=" form-control" id="datosdelequipobusquedaEditar" name="datosdelequipobusqueda" />
+                                    <span id="datosdelequiposelectEditar" name="datosdelequiposelect">
+                                    </span>
+                                </ul>
+                            </div>
+                        </div>
+                        <input type="hidden" name="datosdelequipo" id="datosdelequipoEditar" />
+
+                        <!--Fecha Recepcion-->
+                        <div class="mb-3 col-6">
+                            <label for="FechaRecepcion" class="form-label">Fecha Recepcion</label>
+                            <input for="FechaRecepcion" class="form-control" id="DateEditar" type="datetime" name="Date" readonly />
+                        </div>
+
+
+                        <!--Mantenimientos Realizados-->
+                        <div class="mb-3 col-6">
+                            <label for="mantenimientosRealizados" class="form-label">Mantenimientos Realizados</label>
+                            <textarea for="MantenimientosRealizados" class="form-control" name="mantenimientosRealizados" id="mantenimientosRealizadosEditar" placeholder="Mantenimientos Realizados" rows="1"></textarea>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <!--Observaciones-->
+                        <div class="mb-3 col-6">
+                            <label for="observaciones" class="form-label">Observaciones</label>
+                            <textarea class="form-control" name="observaciones" id="observacionesEditar" placeholder="Observaciones" rows="2"></textarea>
+                        </div>
+
+                        <!--Objetos Dejados-->
+                        <div class="mb-3 col-6">
+                            <label for="objetosDejados" class="form-label">Objetos Dejados</label>
+                            <textarea class="form-control" name="objetosDejados" id="objetosDejadosEditar" placeholder="Objetos Dejados" rows="2"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Editar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!--Modal DepartamentoModal-->
+<div class="modal fade" id="ClienteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Nuevo Departamento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="post" id="ingresodepartamento" name="ingresodepartamento">
+
+                    <div class="row">
+                        <div class="mb-3 col-12">
+                            <label for="descripcionRol" class="form-label">Nombre</label>
+                            <input type="text" class="form-control cero" id="nombre" name="nombre" aria-describedby="emailHelp" />
+                        </div>
+                    </div>
+                    <div class="modal-footer mt-4">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Enviar</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+@section ReporteTecnicoScript
+    {
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+        <script src="~/js/superplaceholder.min.js" asp-append-version="true"></script>
+        <script>
+            const { jsPDF } = window.jspdf;
+
+            $("#btnExportarPDF").click(function() {
+
+                const doc = new jsPDF();
+                doc.addImage("../lib/img/Icono.jpg", "JPEG", 15, 20, 30, 10);
+                doc.text("hello world",20,20)
+                doc.output('dataurlnewwindow', { filename: 'pdf-test.pdf' })
+            })
+        </script>
+        <script>
+            // PDF Reporte Tecnico
+            function pdf(id) {
+                //window.open("https://localhost:7125/Pdf/ReporteTecnico/"+id)
+                window.open("@Url.ActionLink("ReporteTecnico","Pdf")/"+id)
+
+            }
+        </script>
+        <script>
+            superplaceholder({
+                el: document.querySelector('#txtbusqueda'),
+                sentences: ['Busca Encargado', 'Busca Cliente', 'Busca Articulo', 'Busca Mantenimiento'],
+                options: {
+                    // delay between letters (in milliseconds)
+                    letterDelay: 100, // milliseconds
+                    // delay between sentences (in milliseconds)
+                    sentenceDelay: 1000,
+                    // should start on input focus. Set false to autostart
+                    startOnFocus: false, // [DEPRECATED]
+                    // loop through passed sentences
+                    loop: true,
+                    // Initially shuffle the passed sentences
+                    shuffle: false,
+                    // Show cursor or not. Shows by default
+                    showCursor: true,
+                    // String to show as cursor
+                    cursor: '|',
+                    // Control onFocus behaviour. Default is `superplaceholder.Actions.START`
+                    onFocusAction: superplaceholder.Actions.START
+                    //// Control onBlur behaviour. Default is `superplaceholder.Actions.STOP`
+                    //onBlurAction: superplaceholder.Actions.STOP
+                }
+            });
+        </script>
+        <script>
+            const $btnExportar = document.querySelector("#btnExportarExcel"),
+                $tabla = document.querySelector("#tabla");
+
+            $btnExportar.addEventListener("click", function() {
+                let tableExport = new TableExport($tabla, {
+                    exportButtons: false, // No queremos botones
+                    filename: "Reporte de prueba", //Nombre del archivo de Excel
+                    sheetname: "Reporte de prueba", //Título de la hoja
+                });
+                let datos = tableExport.getExportData();
+                let preferenciasDocumento = datos.tabla.xlsx;
+                tableExport.export2file(preferenciasDocumento.data, preferenciasDocumento.mimeType, preferenciasDocumento.filename, preferenciasDocumento.fileExtension, preferenciasDocumento.merges, preferenciasDocumento.RTL, preferenciasDocumento.sheetname);
+            });
+        </script>
+        <script>
+            document.querySelector('#editarReporteTecnico').addEventListener('submit', e => {
+                e.preventDefault()
+                const data = Object.fromEntries(new FormData(e.target))
+                alert(JSON.stringify(data))
+            })
+
+            $(document).ready(function () {
+                rellenartabla();
+                rellenarSelectCliente();
+                rellenarSelectClienteEditar();
+                rellenarSelectEncargado();
+                rellenarSelectEncargadoEditar();
+                rellenarSelectDatosdelEquipo();
+                rellenarSelectDatosdelEquipoEditar();
+                console.log("Funciona Jquery");
+            });
+
+        </script>
+
+        <script>
+            // Envio de datos
+            $("form[name=ingresoReporteTecnico]").on('submit', function (e) {
+                e.preventDefault();
+                var datos = new FormData(this);
+                $.ajax({
+                    type: "POST",
+                    url: "/Gsc/IngresoReporteTecnico",
+                    data: datos,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function (msg) {
+                        if (msg == "404") {
+                            alert("fracaso");
+                        } else {
+                            location.reload();
+                        }
+                    }
+                });
+            });
+
+        </script>
+
+        <script>
+            // Busqueda en la tabla input -> tabla (escribiendo)
+            $("input[name='txtbusqueda']").on('keyup', function () {
+                var busq = $(this).val();
+                if (busq.length > 0) {
+                    $("#tabla").html(" ");
+                    var datos = new FormData();
+                    datos.append("busqueda", busq);
+                    $.ajax({
+                        type: "post",
+                        url: "/Gsc/TraerDatosBusquedaTablaReporteServicioTecnico",
+                        data: datos,
+                        contentType: false,
+                        cache: false,
+                        processData: false,
+                        success: function (msg) {
+                            var dato = jQuery.parseJSON(msg);
+                            $("#tabla").html("");
+                            for (var i = 0; i < dato.length; i++) {
+                                $("#tabla").append(
+                                    `<tr id='r'>
+                                    <td id='r' scope='col'> ${new Date(dato[i].FechaRecepcion).toLocaleDateString('en-GB')} </td>
+                                    <td id='r' scope='col'> ${dato[i].Encargado.Persona.Nombre} </td>
+                                    <td id='r' scope='col'> ${dato[i].Cliente.Persona.Nombre} </td>
+                                    <td id='r' scope='col'> ${dato[i].Articulo.Producto.Nombre} </td>
+                                    <td id='r' scope='col'> ${new Date(dato[i].FechaEntrega).toLocaleDateString('en-GB') == "Invalid Date" ? "-" : new Date(dato[i].FechaEntrega).toLocaleString('en-GB')} </td>
+                                    <td id='r' scope='col'> ${dato[i].FallasPrevias} </td>
+                                    <td id='r' scope='col'> ${dato[i].Resultado} </td>
+                                    <td id='r' scope='col'> ${dato[i].ObjetosDejados} </td>
+                                    <td id='r' scope='col'><button style="border-radius:10px" class="border border-danger" onclick="pdf('${dato[i]._id}')"><i class="bi bi-file-pdf"></i></button></td>
+                                    <td id='r' scope='col'><button  data-bs-toggle="modal" data-bs-target="#EditarReporteTecnico"
+                                        class="border border-info" style="border-radius:10px" onclick="editar('${dato[i]._id}',
+                                                                                                              '${dato[i].Cliente.Persona.Nombre}','${dato[i].Cliente._id}',
+                                                                                                              '${dato[i].FechaRecepcion}',
+                                                                                                              '${dato[i].Articulo.Producto.Nombre}', '${dato[i].Articulo.Producto._id}',
+                                                                                                              '${dato[i].Encargado.Persona.Nombre}', '${dato[i].Encargado._id}',
+                                                                                                                      '${dato[i].FallasPrevias}',
+                                                                                                                      '${dato[i].Resultado}',
+                                                                                                              '${dato[i].MantenimientosRealizados}',
+                                                                                                              '${dato[i].Tipodemantenimiento}'
+                                                                                                              )"> 
+                                                                                                              <i class="bi bi-pencil-fill text -info" ></i> </button></td>
+                                        <td id='r' scope='col'><button style="border-radius:10px" class="border border-danger" onclick="eliminar('${dato[i]._id}')"><i class="bi bi-trash-fill text-danger"></i></button></td>
+                                    <td id='r'></td>
+                                </tr>`
+                                );
+                            }
+
+                        }
+                    });
+                } else {
+                    rellenartabla();
+                }
+            });
+        </script>
+
+
+        <script>
+            // Cliente input -> span (escribiendo)
+            $("input[name='clientebusqueda']").on('keyup', function () {
+                var busq = $(this).val();
+                if (busq.length > 0) {
+                    $("#clienteselect").html(" ");
+                    var datos = new FormData();
+                    datos.append("busqueda", busq);
+                    $.ajax({
+                        type: "post",
+                        url: "/Clientes/TablaClientes",
+                        data: datos,
+                        contentType: false,
+                        cache: false,
+                        processData: false,
+                        success: function (msg) {
+                            var dato = jQuery.parseJSON(msg);
+
+                            $("#clienteselect").html("");
+                            for (var i = 0; i < dato.length; i++) {
+                                $("#clienteselect").append(
+                                    `<li><a class="dropdown-item seleccionable" onclick="seleccionabletipodocumentoidentidad('${dato[i]._id}', '${dato[i].Persona.Nombre}')" >${dato[i].Persona.Nombre}</a></li>`);
+                            }
+
+                        }
+                    });
+                } else {
+                    rellenarSelectCliente();
+                }
+            });
+
+            // Funciones para rellenar - Cliente
+            function rellenarSelectCliente() {
+                $.get({
+                    type: "post",
+                    url: "/Clientes/TablaClientes",
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function (msg) {
+                        var dato = jQuery.parseJSON(msg);
+
+                        $("#clienteselect").html("");
+                        for (var i = 0; i < dato.length; i++) {
+                            $("#clienteselect").append(
+                                `<li><a class="dropdown-item seleccionable" onclick="seleccionableCliente('${dato[i]._id}', '${dato[i].Persona.Nombre}')" >${dato[i].Persona.Nombre}</a></li>`);
+                        }
+
+                    }
+                });
+            }
+
+            // Funciones para rellenar - Cliente [Editar]
+            function rellenarSelectClienteEditar() {
+                $.get({
+                    type: "post",
+                    url: "/Clientes/TablaClientes",
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function (msg) {
+                        var dato = jQuery.parseJSON(msg);
+
+                        $("#clienteselectEditar").html("");
+                        for (var i = 0; i < dato.length; i++) {
+                            $("#clienteselectEditar").append(
+                                `<li><a class="dropdown-item seleccionable" onclick="seleccionableClienteEditar('${dato[i]._id}', '${dato[i].Persona.Nombre}')" >${dato[i].Persona.Nombre}</a></li>`);
+                        }
+
+                    }
+                });
+            }
+
+            // Funciones para rellenar - Encargado
+            function rellenarSelectEncargado() {
+                $.get({
+                    type: "post",
+                    url: "/Usuarios/TablaEncargados",
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function (msg) {
+                        var dato = jQuery.parseJSON(msg);
+                        $("#encargadoselect").html("");
+                        for (var i = 0; i < dato.length; i++) {
+                            $("#encargadoselect").append(
+                                `<li><a class="dropdown-item seleccionable" onclick="seleccionableEncargado('${dato[i]._id}', '${dato[i].NombreUsuario}')" >${dato[i].NombreUsuario}</a></li>`
+                            );
+                        }
+                    }
+                });
+            }
+
+            // Funciones para rellenar - Encargado [Editar]
+            function rellenarSelectEncargadoEditar() {
+                $.get({
+                    type: "post",
+                    url: "/Usuarios/TablaEncargados",
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function (msg) {
+                        var dato = jQuery.parseJSON(msg);
+                        $("#encargadoselectEditar").html("");
+                        for (var i = 0; i < dato.length; i++) {
+                            $("#encargadoselectEditar").append(
+                                `<li><a class="dropdown-item seleccionable" onclick="seleccionableEncargadoEditar('${dato[i]._id}', '${dato[i].NombreUsuario}')" >${dato[i].NombreUsuario}</a></li>`
+                            );
+                        }
+                    }
+                });
+            }
+
+
+            // Funciones para rellenar - Datos del Equipo
+            function rellenarSelectDatosdelEquipo() {
+                $.get({
+                    type: "post",
+                    url: "/Almacen/TablaProductos",
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function (msg) {
+                        var dato = jQuery.parseJSON(msg);
+
+                        $("#datosdelequiposelect").html("");
+                        for (var i = 0; i < dato.length; i++) {
+                            $("#datosdelequiposelect").append(
+                                `<li><a class="dropdown-item seleccionable" onclick="seleccionableDatosEquipo('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre}</a></li>`
+                            );
+                        }
+                    }
+                });
+            }
+
+            // Funciones para rellenar - Datos del Equipo [Editar]
+            function rellenarSelectDatosdelEquipoEditar() {
+                $.get({
+                    type: "post",
+                    url: "/Almacen/TablaProductos",
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function (msg) {
+                        var dato = jQuery.parseJSON(msg);
+
+                        $("#datosdelequiposelectEditar").html("");
+                        for (var i = 0; i < dato.length; i++) {
+                            $("#datosdelequiposelectEditar").append(
+                                `<li><a class="dropdown-item seleccionable" onclick="seleccionableDatosEquipoEditar('${dato[i]._id}', '${dato[i].Nombre}')" >${dato[i].Nombre}</a></li>`
+                            );
+                        }
+                    }
+                });
+            }
+
+
+
+        </script>
+
+        <script>
+            // Darle Valor al input para envio del select dinamico de INSERTAR DATOS
+            function seleccionableCliente(id, nombre) {
+                $("#txtcliente").html("");
+                $("#txtcliente").append(nombre);
+                $("input[name='cliente']").val(id);
+            }
+
+            function seleccionableEncargado(id, nombre) {
+                $("#txtencargado").html("");
+                $("#txtencargado").append(nombre);
+                $("input[name='encargado']").val(id);
+            }
+
+            function seleccionableTipoMantenimiento(id, nombre) {
+                $("#txtTipodemantenimiento").html("");
+                $("#txtTipodemantenimiento").append(nombre);
+                $("input[name='tipodemantenimiento']").val(id);
+            }
+
+            function seleccionableDatosEquipo(id, nombre) {
+                $("#txtdatosdelequipo").html("");
+                $("#txtdatosdelequipo").append(nombre);
+                $("input[name='datosdelequipo']").val(id);
+            }
+            // Darle Valor al input para envio del select dinamico de EDITAR DATOS
+            function seleccionableClienteEditar(id, nombre) {
+                $("#txtclienteEditar").html("");
+                $("#txtclienteEditar").append(nombre);
+                $("input[name='cliente']").val(id);
+            }
+
+            function seleccionableEncargadoEditar(id, nombre) {
+                $("#txtencargadoEditar").html("");
+                $("#txtencargadoEditar").append(nombre);
+                $("input[name='encargado']").val(id);
+            }
+
+            function seleccionableDatosEquipoEditar(id, nombre) {
+                $("#txtdatosdelequipoEditar").html("");
+                $("#txtdatosdelequipoEditar").append(nombre);
+                $("input[name='datosdelequipo']").val(id);
+            }
+
+        </script>
+
+
+        <script>
+            // Scroll Infinito
+            // Observador
+            let ultimoitem
+            let pagina = 0
+            $("#tabla").html("");
+            let observador =  new IntersectionObserver((entradas) => {
+                entradas.forEach(entrada => {
+                    if(entrada.isIntersecting){
+                        pagina += 20
+                        console.log(pagina)
+                        rellenartabla(pagina)
+                    }
+                })
+            }, {
+                rootMargin :'0px 0px 200px 0px',
+                threshold : 1.0
+            })
+
+
+            // Rellenar los datos en la tabla de Reportes Tecnicos
+            function rellenartabla(pagina) {
+                $.get({
+                    type: "get",
+                    url: `/Gsc/ObtenerTablaReporteServicioTecnico?pagina=${pagina}`,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    beforeSend: function () {
+                        // setting a timeout
+                        $("#loading").addClass('spinner-border m-5');
+                    },
+                    success: function (msg) {
+                        var dato = jQuery.parseJSON(msg);
+
+                        for (var i = 0; i < dato.length; i++) {
+                            $("#tabla").append(
+                                `<tr id='r' class='item'>
+                                    <td id='r' scope='col'> ${dato[i].Numero} </td>
+                                    <td id='r' scope='col'> ${new Date(dato[i].FechaRecepcion).toLocaleDateString('en-GB')} </td>
+                                    <td id='r' scope='col'> ${dato[i].Encargado.Persona.Nombre} </td>
+                                    <td id='r' scope='col'> ${dato[i].Cliente.Persona.Nombre} </td>
+                                    <td id='r' scope='col'> ${dato[i].Articulo.Producto.Nombre} </td>
+                                    <td id='r' scope='col'> ${new Date(dato[i].FechaEntrega).toLocaleDateString('en-GB') == "Invalid Date" ? "-" : new Date(dato[i].FechaEntrega).toLocaleString('en-GB')} </td>
+                                    <td id='r' scope='col'> ${dato[i].FallasPrevias} </td>
+                                    <td id='r' scope='col'> ${dato[i].Resultado} </td>
+                                    <td id='r' scope='col'> ${dato[i].ObjetosDejados} </td>
+                                     <td id='r' scope='col'><button style="border-radius:10px" class="border border-danger" onclick="pdf('${dato[i]._id}')"><i class="bi bi-file-pdf"></i></button></td>
+                                    <td id='r' scope='col'><button  data-bs-toggle="modal" data-bs-target="#EditarReporteTecnico"
+                                        class="border border-info" style="border-radius:10px" onclick="editar('${dato[i]._id}',
+                                                                                                              '${dato[i].Cliente.Persona.Nombre}','${dato[i].Cliente._id}',
+                                                                                                              '${dato[i].FechaRecepcion}',
+                                                                                                              '${dato[i].Articulo.Producto.Nombre}', '${dato[i].Articulo.Producto._id}',
+                                                                                                              '${dato[i].Encargado.Persona.Nombre}', '${dato[i].Encargado._id}',
+                                                                                                              '${dato[i].Resultado}',
+                                                                                                              '${dato[i].ObjetosDejados}',
+                                                                                                              '${dato[i].FallasPrevias}',
+                                                                                                              '${dato[i].Tipodemantenimiento}'
+                                                                                                              )"> 
+                                                                                                              <i class="bi bi-pencil-fill text -info" ></i> </button></td>
+                                        <td id='r' scope='col'><button style="border-radius:10px" class="border border-danger" onclick="eliminar('${dato[i]._id}')"><i class="bi bi-trash-fill text-danger"></i></button></td>
+                                    <td id='r'></td>
+                                </tr>`
+
+                            );
+                        }
+
+
+                    },
+                    error: function (xhr) { // if error occured
+                        alert("Error occured.please try again");
+                    },
+                    complete: function () {
+                        var dato = jQuery.parseJSON(msg);
+                        if (pagina < dato.length) {
+                             $("#loading").removeClass('spinner-border m-5');
+                             // optimmizar el observador
+                             if(ultimoitem){
+                                 observador.unobserve(ultimoitem)
+                             }
+                        }
+                        // obtener el ultimo item
+                        const items = document.querySelectorAll(".item")
+                        ultimoitem = items[items.length - 1]
+                        console.log(ultimoitem)
+                        observador.observe(ultimoitem)
+                    },
+
+                });
+            }
+        </script>
+        <script>
+            // Editar Reporte Tecnico
+            function editar(id , cliente, clienteId, fechaRecepcion, producto, productoId ,  encargado, encargadoId , observaciones, objetosDejados, mantenimientosRealizados,tipoMantenimiento) {
+                console.table([`ID :${id}`, `FechaRecepcion :${fechaRecepcion}`, `Encargado :${encargado}` , `EncargadoId :${encargadoId}`])
+                $("input[name=id]").val(id)
+                // Cliente
+                    seleccionableCliente(clienteId, cliente)
+                    $("#txtclienteEditar").html(cliente)
+                // Fecha Recepcion
+                $("#DateEditar").val(new Date(fechaRecepcion).toLocaleString())
+                // Producto
+                    seleccionableDatosEquipo(productoId, producto)
+                    $("#txtdatosdelequipoEditar").html(producto)
+                // Encargado
+                    seleccionableEncargado(encargadoId,encargado)
+                    $("#txtencargadoEditar").html(encargado)
+                // Observaciones
+                $("#observacionesEditar").html(observaciones)
+                $("#mantenimientosRealizadosEditar").html(mantenimientosRealizados)
+                $("#objetosDejadosEditar").html(objetosDejados)
+                // Tipo de Mantenimiento
+                $("#tipodemantenimientoEditar").val(tipoMantenimiento)
+
+
+                $("form[name=editarReporteTecnico]").on('submit', function (e) {
+                    e.preventDefault();
+                    var datos = new FormData(this);
+                    alert(datos)
+                    $.ajax({
+                        type: "PUT",
+                        url: `/Gsc/EditarReporteTecnico`,
+                        data: datos,
+                        contentType: false,
+                        cache: false,
+                        processData: false,
+                        success: function () {
+                            rellenartabla();
+                        },
+                        error: function (jqXhr, textStatus, errorMessage) {
+                            alert("Edit request is Fail.");
+                        }
+                    });
+                });
+            }
+        </script>
+        <script>
+            // Eliminar Reporte Garantia
+            function eliminar(id) {
+                $.ajax({
+                    url: `/Gsc/EliminarReporteTecnico?id=${id}`,
+                    type: 'DELETE',
+                    contentType: 'application/json',
+                    dataType: 'text',
+                    success: function (data) {
+                        rellenartabla();
+                    },
+                    error: function (jqXhr, textStatus, errorMessage) {
+                        alert("Delete request is Fail.");
+                    }
+                });
+            }
+        </script>
+
+
+}

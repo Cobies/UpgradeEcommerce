@@ -1,0 +1,339 @@
+﻿@{
+    ViewData["Title"] = "Transferencias";
+    ViewData["Scripts"] = "TransferenciasScriopt";
+}
+<div class="text-end me-0 mb-2">
+    <div class="container-fluid row ">
+        <div class="row">
+            <input class="form-control me-0 col-2" style="max-width: 25%;" name="txtbusqueda" id="txtbusqueda" type="text" value="" placeholder="Buscar">
+
+
+            <button type="button" class="btn btn-primary ms-5 end-0 position-relative" style="max-width: 25%;" data-bs-toggle="modal" data-bs-target="#ProductoModal">
+                Agregar Producto
+            </button>
+        </div>
+    </div>
+</div>
+<div class="table-responsive-sm">
+
+    <table class="table  table-sm table-hover ">
+        <caption class="end-0 mt-2 ">
+            Elementos:
+            <button onclick="movimientoanterior()" class="btn btn-outline-secondary btn-sm rounded-circle">
+                <i class="bi bi-arrow-left"></i>
+            </button>
+            <span id="cantelemento" name="cantelemento">1 - 20</span>
+            <input type="hidden" name="numelement" id="numelement" value="0" />
+            <button onclick="movimientosiguiente()" class="btn btn-outline-secondary btn-sm rounded-circle">
+                <i class="bi bi-arrow-right"></i>
+            </button><span name="carga" id="carga">
+            </span>
+        </caption>
+        <thead>
+            <tr>
+                <th scope="col">Fecha</th>
+                <th scope="col">Aprobado</th>
+                <th scope="col">Orden Venta</th>
+                <th scope="col">Cliente</th>
+                <th scope="col">Banco</th>
+                <th scope="col">OP. Registrado</th>
+                <th scope="col">Monto</th>
+                <th scope="col">Utilizado</th>
+                <th scope="col">Fecha Aprobado</th>
+                <th scope="col">Aprobado Por</th>
+
+
+            </tr>
+        </thead>
+        <tbody id="tabla">
+        </tbody>
+    </table>
+
+</div>
+
+
+<!--Modals    -->
+<!-- Button trigger modal -->
+<!-- Modal -->
+<div class="modal fade" id="ProductoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Producto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <form action="" method="post" id="ingresotransferencia" name="ingresotransferencia">
+                    <input type="hidden" id="_id" name="_id" value="" />
+                    <div class="row">
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Cliente</label>
+                                <div class="input-group mb-3 ">
+                                    <a class="seleccionable form-select w-100" data-bs-toggle="dropdown" aria-expanded="false"><span id="textcliente" name="textcliente">Seleccione un cliente</span></a>
+                                    <ul class="dropdown-menu w-100">
+                                    <input class=" form-control" id="clientebusqueda" name="clientebusqueda" />
+                                    <span id="clienteselect" name="clienteselect">
+                                        </span>
+                                    </ul>
+                                </div>
+                            <input type="hidden" name="cliente" id="cliente" />                        
+                        </div>
+                        <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Direccion</label>
+                        <input type="datetime" class="form-control cero modinput" id="direccion" name="direccion" aria-describedby="emailHelp" />
+                        </div>
+                    </div>
+                    <div class="row">
+                                                                <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Fecha</label>
+                            <input type="text" class="form-control cero modinput" id="fecha" name="fecha" aria-describedby="emailHelp" />
+                        </div>
+                                            <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Oficina</label>
+                            <input type="text" class="form-control cero modinput" id="almacen" name="almacen" aria-describedby="emailHelp" />
+                        </div>
+                        </div>
+                    <div class="mb-3 col-6">
+                        <label for="descripcionRol" class="form-label">Nro. Operacion</label>
+                        <input type="text" class="form-control cero modinput" id="operacion" name="operacion" aria-describedby="emailHelp" />
+                    </div>
+
+                    <div class="mb-3 col-6">
+                        <label for="descripcionRol" class="form-label">Cuenta</label>
+                        <input type="text" class="form-control cero modinput" id="nombre" name="nombre" aria-describedby="emailHelp" />
+                    </div>
+
+                                            <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Observacion</label>
+                        <input type="text" class="form-control cero modinput" id="observacion" name="observacion" aria-describedby="emailHelp" />
+                        </div>
+                                            <div class="mb-3 col-6">
+                            <label for="descripcionRol" class="form-label">Monto</label>
+                            <input type="number" class="form-control cero modinput" id="monto" name="monto" aria-describedby="emailHelp" />
+                        </div>
+                    
+
+
+
+                    <div class="modal-footer mt-4">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary inhabilitarbtn" id="btnEnviar" data-bs-dismiss="modal">Enviar</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+@section TransferenciasScriopt{
+
+    <script src="~/js/ingresovisualizareditar.js"></script>
+
+
+    <script>
+        $(document).ready(function () {
+            rellenartabla();
+            rellenarSelectCliente();
+        });
+    </script>
+
+
+
+
+
+    <script>
+        function rellenartabla() {
+            var numelement = document.getElementById("numelement").value;
+            var busq = document.getElementById("txtbusqueda").value;
+            var datos = new FormData();
+            datos.append("numelement", numelement);
+            datos.append("busqueda", busq);
+            $.get({
+                type: 'POST',
+                url: "/Finanzas/BusquedaTransferenciaLimite",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false,
+                beforeSend: function () {
+                    $("#carga").append(`<div class="d-flex align-items-center">
+                                                <strong>Loading...</strong>
+                                                <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div>
+                                                </div>`
+                    );
+                },
+                success: function (msg) {
+                    $("#carga").html("");
+                    var dato = jQuery.parseJSON(msg);
+                    $("#tabla").html(" ");
+                    for (var i = 0; i < dato.length; i++) {
+                        $("#tabla").append(
+                            "<tr id='r'>" +
+                            "<td >" + dato[i].DepositoCliente.FechaCreado + "</td>" +
+                            "<td >" + dato[i].Aprobado + "</td>" +
+                            "<td >" + dato[i].NotaPedido.Numero + "</td>" +
+                            "<td >" + dato[i].DepositoCliente.Cliente.Persona.Nombre + "</td>" +
+                            "<td >" + dato[i].CuentaBancaria.Banco.Nombre + "</td>" +
+                            "<td >" + dato[i].DepositoCliente.Operacion + "</td>" +
+                            "<td >" + dato[i].DepositoCliente.Monto + "</td>" +
+                            "<td >" + dato[i].DepositosCliente.Monto + "</td>" +
+                            "<td >" + dato[i].DepositosCliente.FechaAprobacion + "</td>" +
+                            "<td >" + dato[i].DepositosCliente.AprobadoPorEmpleado.Persona.Nombre + "</td>" +
+                            `<td class='d-inline-flex'> <button type='button' class='btn btn-primary btn-sm ' data-bs-toggle='modal' onclick="TrasnferenciasId('${dato[i]._id}')" data-bs-target='#ProductoModal'><i class='bi bi-search'></i> </button>` +
+                            `<td class='d-inline-flex'> <button type='button' class='btn btn-primary btn-sm ' data-bs-toggle='modal' onclick="EditarTrasnferenciaId('${dato[i]._id}')" data-bs-target='#ProductoModal'><i class='bi bi-pencil-square'></i> </button>` +
+
+                            "</tr>"
+                        );
+                    }
+                    
+                }
+            });
+        }
+    </script>
+
+    <script>
+        function TrasnferenciasId(id){
+                var datos = new FormData();
+                datos.append("id", id);
+                $.ajax({
+                    type: "POST",
+                    url: "/Finanzas/BusquedaReciboId",
+                    data: datos,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function (msg) {
+
+
+                        var dato = jQuery.parseJSON(msg);
+
+                        $("#codigo").val(dato.Codigo);
+                        $("#nombre").val(dato.Nombre);
+                        $("#costo").val(dato.Precio);
+                        $("#garantia").val(dato.Garantia);
+                        $("#codigosunat").val(dato.CodigoSunat);
+                        $("#descripcion").val(dato.Descripcion);
+
+                        seleccionablemarca(dato.Marca._id, dato.Marca.Nombre);
+                        seleccionablelinea(dato.Linea._id, dato.Linea.Nombre);
+                        seleccionableunidad(dato.Unidad._id, dato.Unidad.Nombre);
+                        seleccionablemoneda(dato.Moneda._id, dato.Moneda.Nombre);
+                        seleccionableimpuesto(dato.Impuesto._id, dato.Impuesto.Nombre);
+
+                        VisualizarModal();
+                    }
+                });
+            
+        }
+
+        function EditarTrasnferenciaId(id) {
+            var datos = new FormData();
+            datos.append("id", id);
+            $.ajax({
+                type: "POST",
+                url: "/Finanzas/BusquedaReciboId",
+                data: datos,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+
+
+                    var dato = jQuery.parseJSON(msg);
+
+                    $("#codigo").val(dato.Codigo);
+                    $("#nombre").val(dato.Nombre);
+                    $("#costo").val(dato.Precio);
+                    $("#garantia").val(dato.Garantia);
+                    $("#codigosunat").val(dato.CodigoSunat);
+                    $("#descripcion").val(dato.Descripcion);
+
+                    seleccionablemarca(dato.Marca._id, dato.Marca.Nombre);
+                    seleccionablelinea(dato.Linea._id, dato.Linea.Nombre);
+                    seleccionableunidad(dato.Unidad._id, dato.Unidad.Nombre);
+                    seleccionablemoneda(dato.Moneda._id, dato.Moneda.Nombre);
+                    seleccionableimpuesto(dato.Impuesto._id, dato.Impuesto.Nombre);
+
+                    EditarModal();
+                }
+            });
+        }
+
+
+    </script>
+
+
+
+    <script>
+        $("input[name='clientebusqueda']").on('keyup', function () {
+            var busq = $(this).val();
+            if (busq.length > 0) {
+                $("#clienteselect").html(" ");
+                var datos = new FormData();
+                datos.append("busqueda", busq);
+                $.ajax({
+                    type: "post",
+                    url: "/Clientes/BusquedaCliente",
+                    data: datos,
+                    contentType: false,
+                    cache: false,
+                    processData: false,
+                    success: function (msg) {
+                        var dato = jQuery.parseJSON(msg);
+
+                        $("#clienteselect").html("");
+                        for (var i = 0; i < dato.length; i++) {
+                            $("#clienteselect").append(
+                                `<li><a class="dropdown-item seleccionable" onclick="seleccionablecliente('${dato[i]._id}', '${dato[i].Persona.Nombre}', '${dato[i].Persona.Distrito.Nombre}/${dato[i].Persona.Distrito.Provincia.Nombre}/${dato[i].Persona.Distrito.Provincia.Departamento.Nombre}', '${dato[i].Persona.Direccion}')" >${dato[i].Persona.Nombre}</a></li>`);
+                        }
+
+                    }
+                });
+            } else {
+                rellenarSelectCliente();
+            }
+        });
+    </script>
+
+
+    <script>
+        function rellenarSelectCliente() {
+            $.get({
+                type: "post",
+                url: "/Clientes/TablaClientes",
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (msg) {
+                    var dato = jQuery.parseJSON(msg);
+
+                    $("#clienteselect").html("");
+                    for (var i = 0; i < dato.length; i++) {
+                        $("#clienteselect").append(
+                                `<li><a class="dropdown-item seleccionable" onclick="seleccionablecliente('${dato[i]._id}', '${dato[i].Persona.Nombre}', '${dato[i].Persona.Distrito.Nombre}/${dato[i].Persona.Distrito.Provincia.Nombre}/${dato[i].Persona.Distrito.Provincia.Departamento.Nombre}', '${dato[i].Persona.Direccion}')" >${dato[i].Persona.Nombre}</a></li>`);
+                    }
+
+                }
+            });
+        }
+    </script>
+
+    <script>
+        function seleccionablecliente(id, nombre, distrito, direccion) {
+            $("#textcliente").html("");
+            $("input[name='ubicacion']").val(distrito);
+            $("input[name='direccion']").val(direccion);
+            $("#textcliente").append(nombre);
+            $("input[name='cliente']").val(id);
+        }
+    </script>
+
+
+
+
+}
